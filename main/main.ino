@@ -1,7 +1,7 @@
 #include "Arduino_LED_Matrix.h"
 #include <Servo.h>
-
-// Import drivers for sensors?
+#include "dht_nonblocking.h"
+#define DHT_SENSOR_TYPE DHT_TYPE_11
 
 // Temporary motor pins
 
@@ -11,6 +11,7 @@ const int WATER_HIGH = 0; //D0
 const int WATER_READ = 5; //A5
 const int MOISTURE_READ = 0; //A0
 const int TEMP_READ = 1; //A1
+const int DHT_SENSOR_PIN = 8; //D8
 
 Servo pump; // Pump uses PPM signal, so it needs to use the servo library
 
@@ -50,6 +51,7 @@ unsigned long lastWaterMs = 0;
 unsigned long lastSampleMs = 0;
 
 ArduinoLEDMatrix matrix;
+DHT_nonblocking dht_sensor( DHT_SENSOR_PIN, DHT_SENSOR_TYPE );
 
 enum class State {
   Loop,
@@ -70,35 +72,7 @@ void setup() {
   digitalWrite(WATER_HIGH, HIGH);
   
   pinMode(LED_BUILTIN, OUTPUT); // Initialize the digital pin as an output.
-
-  byte frame[8][12] = {
-    { 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0 },
-    { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0 },
-    { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0 },
-    { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0 },
-    { 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1 },
-    { 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0 },
-    { 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0 },
-    { 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0 }
-  };
-
-  /*
-    byte frame[8][12] = {
-    { 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0 },
-    { 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0 },
-    { 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0 },
-    { 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0 },
-    { 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-  };
-  */
-
   currentState = State::Loop;
-
-  matrix.begin();
-  matrix.renderBitmap(frame, 8, 12);
   Serial.begin(9600);
 }
 
@@ -132,11 +106,17 @@ void loop() {
       int rawMoist = analogRead(MOISTURE_READ);
       float moistPct = getMoistPct(rawMoist);
 
+      // Need to store temperature reading across state
+      // Only sample when reading successful!
+
       // Read temperature
-      float tempC = 0; //sensors.getTempCByIndex(0); Call temperature library from here .    
+      float tempC = 0; 
+      float humidity = 0;
+
+      bool readSuccess = dht_sensor.measure(&tempC, &humidity);
 
       int rawWaterPresent = analogRead(WATER_READ);
-      bool waterPresent = rawWaterPresent >= WATER_THRESHOLD;
+      bool waterPresent = true; //rawWaterPresent >= WATER_THRESHOLD;
 
       bool pumpCdExceeded = now - pumpStartMs > MAX_PUMP_ON_MS;
 
@@ -162,11 +142,14 @@ void loop() {
       Serial.print(moistPct, 1);
 
       Serial.print(" tempC=");
+      Serial.print(tempC, 1);
       // if (tempValid) Serial.print(tempC, 1);
       // else Serial.print("NA");
 
       Serial.print(" pumpOn=");
       Serial.println(pumpOn ? "YES" : "NO");
+      Serial.print(" tempSuccess=");
+      Serial.println(readSuccess ? "YES" : "NO");
 
       break;
     }
