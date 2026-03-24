@@ -4,6 +4,46 @@
 #include <EEPROM.h>
 #define DHT_SENSOR_TYPE DHT_TYPE_11
 
+// Enum declarations must come before any function definitions so that the
+// Arduino IDE's auto-generated forward declarations can reference these types.
+enum class State {
+  MainLoop,
+  RedFlash,
+  WaterLoop,
+  PumpOn,
+  PumpOff,
+  PumpCD,
+  NoWater,
+  SensorFail,
+  PromptDry,
+  PromptWet,
+  CalibrationDone,
+  ButtonPressed,
+  CalibrationButtonYield
+};
+
+const char* stateNames[] = { 
+  "MainLoop", 
+  "RedFlash", 
+  "WaterLoop", 
+  "PumpOn", 
+  "PumpOff", 
+  "PumpCD", 
+  "NoWater", 
+  "SensorFail", 
+  "PromptDry",
+  "PromptWet",
+  "CalibrationDone", 
+  "ButtonPressed",
+  "CalibrationButtonYield"
+};
+
+enum class LEDColor {
+  Green,
+  Blue,
+  Red
+};
+
 // Temporary motor pins
 
 // -------------------- Pins --------------------
@@ -22,7 +62,7 @@ Servo pump; // Pump uses PPM signal, so it needs to use the servo library
 
 // How frequently we want to sample the sensors
 // Essentially our clock cycle time, which recall is the inverse of frequency.
-const unsigned long SENSOR_SAMPLE_MS = 100UL; // read sensors every 1s
+const unsigned long SENSOR_SAMPLE_MS = 1000UL; // read sensors every 1s
 
 // -------------------- Moisture Calibration --------------------
 // You MUST calibrate these for your sensor + soil:
@@ -38,16 +78,18 @@ const float ON_THRESHOLD_BASE  = 0.25;  // water when moisture drops below this
 const float OFF_THRESHOLD_BASE = 0.75;  // stop when moisture rises above this, too wet!
 const int WATER_THRESHOLD = 100; // Threshold for when we detect current going thru the water to verify that the water is in the container.
 
-// Temperature adjustment (simple, practical)
-// Hotter -> water sooner (raise thresholds slightly) and/or water a bit longer
-// Colder -> water later (lower thresholds)
-const float HOT_TEMP_C  = 30.0;
-const float COLD_TEMP_C = 12.0;
-const float TEMP_ADJUST_MAX = 7.0; // max +/- percent points added/subtracted
+// -------------------- Vapor Pressure Deficit (VPD) Adjustment --------------------
+// VPD (kPa) measures evaporative demand. Higher VPD = plant transpires faster.
+// VPD = SVP(T) - (RH/100)*SVP(T), where SVP uses the Magnus formula.
+// Low VPD  (< VPD_LOW_KPA)  -> low demand -> delay watering (lower ON threshold)
+// High VPD (> VPD_HIGH_KPA) -> high demand -> water sooner  (raise ON threshold)
+const float VPD_LOW_KPA    = 0.4f;  // kPa — minimal evaporative stress
+const float VPD_HIGH_KPA   = 1.2f;  // kPa — high evaporative stress
+const float VPD_ADJUST_MAX = 0.07f; // max ± adjustment applied to ON_THRESHOLD_BASE (fraction)
 
 // Pump timing safety
 const char PUMP_ON_DEGREE = 0; // Value from 0 to 80 describing the speed of the pump. 0 fastest 80 slowest.
-const unsigned long MAX_PUMP_ON_MS = 10UL * 1000UL; // 10 seconds max per cycle
+const unsigned long MAX_PUMP_ON_MS = 60UL * 1000UL; // 60 seconds max per cycle
 
 // -------------------- State --------------------
 bool pumpOn = false;
@@ -55,11 +97,17 @@ unsigned long pumpStartMs = 0;
 unsigned long lastWaterMs = 0;
 unsigned long lastSampleMs = 0;
 
+// Last valid DHT11 readings — seeded to neutral indoor defaults
+float lastTempC    = 22.0f;
+float lastHumidity = 50.0f;
+
 int moistureDry = 0;
 int moistureWet = 0;
 
 const unsigned int SENSOR_WET_ADDRESS = 0; //Addresses 0 through 3
 const unsigned int SENSOR_DRY_ADDRESS = 4; //Addresses 4 through 7
+const unsigned int PUMP_CD_MINS = 5; // 5 minute failsafe!
+const unsigned long PUMP_CD_MILLIS = (unsigned long)PUMP_CD_MINS * 60UL * 1000UL;
 
 const int calibrationHoldMs = 2000;
 int btnDown = 0;
@@ -67,27 +115,31 @@ int btnDown = 0;
 ArduinoLEDMatrix matrix;
 DHT_nonblocking dht_sensor( DHT_SENSOR_PIN, DHT_SENSOR_TYPE );
 
-enum class State {
-  MainLoop,
-  RedFlash,
-  WateringLoop,
-  Read,
-  EnablePump,
-  DisablePump,
-  Error,
-  CriticalError,
-  SensorError,
-  PromptDry,
-  PromptWet,
-  CalibrationDone,
-  Communicate
-};
+// -------------------- VPD Helpers --------------------
 
-enum class LEDColor {
-  Green,
-  Blue,
-  Red
-};
+// Magnus formula: saturation vapor pressure in kPa
+float saturationVaporPressure(float tempC) {
+  return 0.6108f * exp(17.27f * tempC / (tempC + 237.3f));
+}
+
+// VPD = SVP - actual vapor pressure (kPa)
+float computeVPD(float tempC, float humidity) {
+  float svp = saturationVaporPressure(tempC);
+  return svp * (1.0f - humidity / 100.0f);
+}
+
+// Returns ON_THRESHOLD_BASE shifted by VPD-derived demand.
+// High VPD (hot/dry air)  -> raise threshold -> water sooner.
+// Low VPD  (cool/humid)   -> lower threshold -> water later.
+float getAdjustedOnThreshold(float tempC, float humidity) {
+  float vpd = computeVPD(tempC, humidity);
+  // Normalise VPD into [0,1] over the expected operating range
+  float t = (constrain(vpd, VPD_LOW_KPA, VPD_HIGH_KPA) - VPD_LOW_KPA)
+            / (VPD_HIGH_KPA - VPD_LOW_KPA);
+  // Map to [-VPD_ADJUST_MAX, +VPD_ADJUST_MAX]
+  float adjust = (t - 0.5f) * 2.0f * VPD_ADJUST_MAX;
+  return constrain(ON_THRESHOLD_BASE + adjust, 0.05f, 0.95f);
+}
 
 State currentState;
 
@@ -143,6 +195,8 @@ void setup() {
 
   Serial.begin(9600);
 
+  currentState = State::MainLoop;
+
   delay(1000);
 
   // Load initial values
@@ -179,7 +233,9 @@ float getMoistPct(int raw) {
 
 int flashBegin = 0;
 bool lastBtnDown = false;
-bool inCriticalError = false;
+bool inSensorFail = false;
+unsigned long pumpOffCDTime = 0;    // millis() timestamp when pump cooldown ends
+State preButtonState = State::PromptDry; // where ButtonPressed should return on early release
 
 bool isButtonDown() {
   return digitalRead(BUTTON) == LOW;
@@ -201,225 +257,311 @@ void loop() {
 
   lastBtnDown = btnDownNow;
 
+  //Serial.println(stateNames[(int) currentState]);
+
   switch (currentState) {
+
+
+    // ── MainLoop ─────────────────────────────────────────────────────
+    // Hub state: validate calibration, check for button-initiated
+    // calibration, detect missing water, then enter WaterLoop.
     case State::MainLoop: {
+      setLEDEnabled(LEDColor::Green, true);
+      setLEDEnabled(LEDColor::Blue, false);
+      setLEDEnabled(LEDColor::Red, false);
+
+      // Button held → enter calibration
       if (isButtonDown()) {
         if (now - btnDown > calibrationHoldMs) {
+          Serial.println("User initiated calibration!");
           beginRedFlash();
-          break;
         }
+        break;  // stay in MainLoop while button is held but not long enough
+      }
 
-        currentState = State::MainLoop;
+      // Bad calibration values → force recalibration
+      if (moistureWet < 0 || moistureDry > 1024 || moistureWet >= moistureDry) {
+        Serial.println("Bad calibration values!");
+        beginRedFlash();
         break;
       }
-      
-      if (moistureWet < 0 | moistureDry > 1024 | moistureWet >= moistureDry) {
-        beginRedFlash(); // Bad values found!
-      } else {
-        currentState = State::WateringLoop; // Otherwise, just proceed!
-      }
 
+      // Everything OK → enter watering mode
+      currentState = State::WaterLoop;
       break;
     }
+
+    // ── RedFlash ─────────────────────────────────────────────────────
+    // Flash red for 3 seconds, then start dry calibration prompt.
     case State::RedFlash: {
-      pumpSet(false);
       processFlash(LEDColor::Red, 500);
 
       if (now - flashBegin > 3000) {
         disableLEDS();
         currentState = State::PromptDry;
       }
-
       break;
     }
+
+    // ── PromptDry ────────────────────────────────────────────────────
+    // Flash green LED — waiting for user to press & hold button with
+    // sensor in dry soil / air.
     case State::PromptDry: {
       setLEDEnabled(LEDColor::Blue, false);
       setLEDEnabled(LEDColor::Red, false);
       processFlash(LEDColor::Green, 1000);
 
-      if (isButtonDown() && now - btnDown > calibrationHoldMs) {
-        int wrote = analogRead(MOISTURE_READ);
-        EEPROM.put(SENSOR_DRY_ADDRESS, wrote);
-        Serial.print("Dry=");
-        Serial.println(wrote);
-        currentState = State::PromptWet;
+      if (isButtonDown()) {
+        preButtonState = State::PromptDry;
+        currentState = State::ButtonPressed;
       }
-
       break;
     }
+
+    // ── PromptWet ────────────────────────────────────────────────────
+    // Flash blue LED — waiting for user to press & hold button with
+    // sensor in wet soil / water.
     case State::PromptWet: {
       setLEDEnabled(LEDColor::Green, false);
       setLEDEnabled(LEDColor::Red, false);
       processFlash(LEDColor::Blue, 1000);
 
-      if (isButtonDown() && now - btnDown > calibrationHoldMs) {
-        int wrote = analogRead(MOISTURE_READ);
-        EEPROM.put(SENSOR_WET_ADDRESS, wrote);
-        Serial.print("Wet=");
-        Serial.println(wrote);
-        currentState = State::CalibrationDone;
+      if (isButtonDown()) {
+        preButtonState = State::PromptWet;
+        currentState = State::ButtonPressed;
+      }
+      break;
+    }
+
+    // ── ButtonPressed ────────────────────────────────────────────────
+    // Shared hold-detection state for calibration.  While held, stays
+    // here.  On release before the hold threshold, returns to the
+    // previous prompt.  On successful hold, records the calibration
+    // value and advances.
+    case State::ButtonPressed: {
+      if (!isButtonDown()) {
+        // Released too early — go back to the prompt
+        currentState = preButtonState;
+        break;
       }
 
-      break;
-    }
-    case State::CalibrationDone: {
-      disableLEDS();
+      if (now - btnDown > calibrationHoldMs) {
+        int wrote = analogRead(MOISTURE_READ);
 
-      delay(500);
-
-      enableLEDS();
-
-      delay(500);
-
-      disableLEDS();
-
-      delay(500);
-
-      enableLEDS();
-
-      delay(500);
-
-      disableLEDS();
-      currentState = State::MainLoop;
-
-      break;
-    }
-    case State::WateringLoop: {
-        if (pumpOn) {
-          setLEDEnabled(LEDColor::Blue, true);
-          setLEDEnabled(LEDColor::Green, false);
-          setLEDEnabled(LEDColor::Red, false);
+        if (preButtonState == State::PromptDry) {
+          EEPROM.put(SENSOR_DRY_ADDRESS, wrote);
+          moistureDry = wrote;
+          Serial.print("Dry=");
+          Serial.println(wrote);
+          currentState = State::CalibrationButtonYield;
         } else {
-          setLEDEnabled(LEDColor::Blue, false);
-          setLEDEnabled(LEDColor::Green, true);
-          setLEDEnabled(LEDColor::Red, false);
+          // preButtonState == State::PromptWet
+          EEPROM.put(SENSOR_WET_ADDRESS, wrote);
+          moistureWet = wrote;
+          Serial.print("Wet=");
+          Serial.println(wrote);
+          currentState = State::CalibrationDone;
         }
-        if (now - lastSampleMs <= SENSOR_SAMPLE_MS) return;
-
-        currentState = State::Read;
-        break;
+      }
+      // else: still holding, stay in ButtonPressed
+      break;
     }
-    case State::Read: {
+
+    // ── CalibrationButtonRelease ─────────────────────────────────
+    // Waits for the button to be released.
+    // Then, goes to prompt wet state.
+    case State::CalibrationButtonYield: {
+      enableLEDS();
+      if (isButtonDown()) break;
+
+      currentState = State::PromptWet;
+      break;
+    }
+
+    // ── CalibrationDone ──────────────────────────────────────────────
+    // Quick LED celebration, then back to MainLoop.
+    case State::CalibrationDone: {
+      disableLEDS();  delay(500);
+      enableLEDS();   delay(500);
+      disableLEDS();  delay(500);
+      enableLEDS();   delay(500);
+      disableLEDS();
+
+      currentState = State::MainLoop;
+      break;
+    }
+
+    // ── WaterLoop ────────────────────────────────────────────────────
+    // Core monitoring state.  Reads sensors at SENSOR_SAMPLE_MS rate,
+    // decides whether to start pumping, flags errors.
+    case State::WaterLoop: {
+      setLEDEnabled(LEDColor::Green, true);
+      setLEDEnabled(LEDColor::Blue, false);
+      setLEDEnabled(LEDColor::Red, false);
+
+      if (now - lastSampleMs < SENSOR_SAMPLE_MS) break;
       lastSampleMs = now;
 
-      // Read moisture
+      // ── Sensor reads ──
       int rawMoist = analogRead(MOISTURE_READ);
       float moistPct = getMoistPct(rawMoist);
 
-      // Need to store temperature reading across state
-      // Only sample when reading successful!
-
-      // Read temperature
-      float tempC = 0; 
+      float tempC = 0;
       float humidity = 0;
-
       bool readSuccess = dht_sensor.measure(&tempC, &humidity);
+      if (readSuccess) {
+        lastTempC    = tempC;
+        lastHumidity = humidity;
+      }
+
+      float onThreshold = getAdjustedOnThreshold(lastTempC, lastHumidity);
 
       int rawWaterPresent = analogRead(WATER_READ);
-      bool waterPresent = rawWaterPresent >= WATER_THRESHOLD;
+      bool waterPresent = true; //rawWaterPresent >= WATER_THRESHOLD;
 
-      bool pumpCdExceeded = now - pumpStartMs > MAX_PUMP_ON_MS;
-
-      if (!pumpOn && waterPresent && moistPct <= ON_THRESHOLD_BASE) {
-        currentState = State::EnablePump;
-        break;
-      } else if (pumpOn && (!waterPresent || moistPct >= OFF_THRESHOLD_BASE || pumpCdExceeded)) {
-        currentState = State::DisablePump;
-        break;
-      } else if (!waterPresent) {
-        currentState = State::Error;
+      // ── Sensor failure check ──
+      // (placeholder: add your sensor-failure detection logic here)
+      if (inSensorFail) {
+        currentState = State::SensorFail;
         break;
       }
 
-      currentState = State::WateringLoop;
+      // ── No water → Error ──
+      if (!waterPresent) {
+        currentState = State::NoWater;
+        break;
+      }
+
+      // ── Moisture low → start pumping ──
+      if (moistPct <= onThreshold) {
+        currentState = State::PumpOn;
+        break;
+      }
 
       // Debug output
-      Serial.print("rawMoist=");
-      Serial.print(rawMoist);
-      Serial.print(" rawWater=");
-      Serial.print(rawWaterPresent);
-      Serial.print(" moist%=");
-      Serial.print(moistPct, 1);
+      Serial.print("rawMoist=");   Serial.print(rawMoist);
+      Serial.print(" moist%=");    Serial.print(moistPct, 2);
+      Serial.print(" onThresh=");  Serial.print(onThreshold, 2);
+      Serial.print(" tempC=");     Serial.print(lastTempC, 1);
+      Serial.print(" hum%=");      Serial.print(lastHumidity, 1);
+      Serial.print(" vpd=");       Serial.print(computeVPD(lastTempC, lastHumidity), 3);
+      Serial.print(" dhtOK=");     Serial.println(readSuccess ? "YES" : "NO");
 
-      Serial.print(" tempC=");
-      Serial.print(tempC, 1);
-      // if (tempValid) Serial.print(tempC, 1);
-      // else Serial.print("NA");
-
-      Serial.print(" pumpOn=");
-      Serial.println(pumpOn ? "YES" : "NO");
-      Serial.print(" tempSuccess=");
-      Serial.println(readSuccess ? "YES" : "NO");
-
+      currentState = State::MainLoop;
       break;
     }
-    case State::EnablePump: {
-      pumpSet(true);
-      currentState = State::Communicate;
-      break;
-    }
-    case State::DisablePump: {
-      pumpSet(false);
-      currentState = State::Communicate;
-      break;
-    }
-    case State::Error: {
-        setLEDEnabled(LEDColor::Red, true);
-        setLEDEnabled(LEDColor::Green, false);
-        setLEDEnabled(LEDColor::Blue, true);
-        Serial.println("ERROR! NO WATER PRESENT!!");
-        delay(1000);
 
-        currentState = State::DisablePump;
-        break;
-    }
-    case State::CriticalError: {
-        pumpSet(false); // Failsafe!
-        inCriticalError = true;
-        Serial.println("ERROR! SENSOR FAILURE!!!!!");
+    // ── PumpOn ───────────────────────────────────────────────────
+    // Pump is running.  Re-reads sensors each cycle; stays here while
+    // moisture is still low and pump hasn't run too long.
+    case State::PumpOn: {
+      setLEDEnabled(LEDColor::Blue, true);
+      setLEDEnabled(LEDColor::Green, false);
+      setLEDEnabled(LEDColor::Red, false);
 
-        setLEDEnabled(LEDColor::Red, true);
-        setLEDEnabled(LEDColor::Green, false);
-        setLEDEnabled(LEDColor::Blue, false);
+      if (!pumpOn) pumpSet(true);  // turn on once on first entry
 
-        disableLEDS();
-
-        delay(250);
-
-        setLEDEnabled(LEDColor::Red, true);
-
-        delay(250);
-
-        disableLEDS();
-
-        delay(250);
-
-        setLEDEnabled(LEDColor::Red, true);
-
-        delay(250);
-
-        disableLEDS();
-
-        delay(250);
-
-        setLEDEnabled(LEDColor::Red, true);
-
-        delay(1000);
-
-        // Handle error processing here!
-
-        // If the error is resolved, then critical error flag is set to false
-        currentState = State::Communicate;
-
-        break;
-    }
-    case State::Communicate: {
-      if (inCriticalError) {
-        currentState = State::CriticalError;
+      if (isButtonDown()) {
+        currentState = State::PumpOff;
         break;
       }
 
-      currentState = State::MainLoop;
+      if (now - lastSampleMs < SENSOR_SAMPLE_MS) break;
+      lastSampleMs = now;
+
+      int rawMoist = analogRead(MOISTURE_READ);
+      float moistPct = getMoistPct(rawMoist);
+      bool pumpTooLong = (now - pumpStartMs) > MAX_PUMP_ON_MS;
+
+      // Exit conditions: moisture satisfied OR pump safety timeout
+      if (moistPct >= OFF_THRESHOLD_BASE || pumpTooLong || inSensorFail) {
+        currentState = State::PumpOff;
+        break;
+      }
+
+      // Otherwise keep pumping (self-loop)
+      break;
+    }
+
+    // ── PumpOff ──────────────────────────────────────────────────
+    // Turns pump off.  Routes to PumpCD if pump ran too long (safety),
+    // otherwise straight back to MainLoop.
+    case State::PumpOff: {
+      bool wasTooLong = (now - pumpStartMs) > MAX_PUMP_ON_MS;
+      pumpSet(false);
+      disableLEDS();
+
+      if (isButtonDown()) {
+        currentState = State::MainLoop;
+        break;
+      }
+      
+      // ── Sensor failure check ──
+      if (inSensorFail) {
+        currentState = State::SensorFail;
+        break;
+      }
+
+      if (wasTooLong) {
+        pumpOffCDTime = now + PUMP_CD_MILLIS;
+        currentState = State::PumpCD;
+      } else {
+        currentState = State::MainLoop;
+      }
+      break;
+    }
+
+    // ── PumpCD (Pump Cooldown) ───────────────────────────────────────
+    // Enforces a cooldown period after the pump ran for too long.
+    // Flashes red while cooling down, then returns to MainLoop.
+    case State::PumpCD: {
+      processFlash(LEDColor::Red, 1000);
+      setLEDEnabled(LEDColor::Green, false);
+      setLEDEnabled(LEDColor::Blue, false);
+
+      if (now >= pumpOffCDTime) {
+        pumpOffCDTime = 0;
+        disableLEDS();
+        currentState = State::MainLoop;
+      }
+      // else: still cooling down (self-loop)
+      break;
+    }
+
+    // ── Error (No Water) ─────────────────────────────────────────────
+    // Water reservoir empty.  Self-loops until water is detected,
+    // then returns to WaterLoop.
+    case State::NoWater: {
+      setLEDEnabled(LEDColor::Red, true);
+      setLEDEnabled(LEDColor::Green, false);
+      setLEDEnabled(LEDColor::Blue, true);
+
+      pumpSet(false);
+
+      int rawWater = analogRead(WATER_READ);
+      if (rawWater >= WATER_THRESHOLD) {
+        disableLEDS();
+        currentState = State::WaterLoop;
+      }
+      break;
+    }
+
+    // ── SensorFail ───────────────────────────────────────────────────
+    // A sensor has failed.  Pump is killed as a safety measure.
+    // Self-loops until the failure is resolved, then returns to
+    // WaterLoop.
+    case State::SensorFail: {
+      pumpSet(false);
+
+      processFlash(LEDColor::Red, 200);
+      setLEDEnabled(LEDColor::Green, false);
+      setLEDEnabled(LEDColor::Blue, false);
+
+      // TODO: add your sensor-failure resolution check here
+      if (!inSensorFail) {
+        disableLEDS();
+        currentState = State::WaterLoop;
+      }
       break;
     }
   }
