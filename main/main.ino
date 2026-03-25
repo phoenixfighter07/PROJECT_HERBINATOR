@@ -117,6 +117,10 @@ DHT_nonblocking dht_sensor( DHT_SENSOR_PIN, DHT_SENSOR_TYPE );
 
 // -------------------- VPD Helpers --------------------
 
+// VPD is tells us how quickly the plant is losing water through transpiration (Evaporation through leaves).
+// Higher VPD means the air dries the plant quickly (hot/dry air), so the watering threshold needs to be lowered.
+// Lower VPD means the air dries the plant slower (cool/humid air), so the watering threshold needs to be increased.
+
 // Magnus formula: saturation vapor pressure in kPa
 float saturationVaporPressure(float tempC) {
   return 0.6108f * exp(17.27f * tempC / (tempC + 237.3f));
@@ -129,8 +133,6 @@ float computeVPD(float tempC, float humidity) {
 }
 
 // Returns ON_THRESHOLD_BASE shifted by VPD-derived demand.
-// High VPD (hot/dry air)  -> raise threshold -> water sooner.
-// Low VPD  (cool/humid)   -> lower threshold -> water later.
 float getAdjustedOnThreshold(float tempC, float humidity) {
   float vpd = computeVPD(tempC, humidity);
   // Normalise VPD into [0,1] over the expected operating range
