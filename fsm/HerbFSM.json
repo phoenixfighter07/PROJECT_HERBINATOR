@@ -1,100 +1,107 @@
 {
   "nodes": [
     {
-      "x": 223,
-      "y": 327,
+      "x": 284,
+      "y": 497,
       "text": "Init",
       "isAcceptState": false,
       "textOnly": false
     },
     {
-      "x": 737,
-      "y": 548,
+      "x": 798,
+      "y": 718,
       "text": "Pump On",
       "isAcceptState": false,
       "textOnly": false
     },
     {
-      "x": 737,
-      "y": 774,
+      "x": 798,
+      "y": 944,
       "text": "Pump Off",
       "isAcceptState": false,
       "textOnly": false
     },
     {
-      "x": 721,
-      "y": 327,
+      "x": 782,
+      "y": 497,
       "text": "Water Loop",
       "isAcceptState": false,
       "textOnly": false
     },
     {
-      "x": 417,
-      "y": 327,
+      "x": 478,
+      "y": 497,
       "text": "Main Loop",
       "isAcceptState": false,
       "textOnly": false
     },
     {
-      "x": 108,
-      "y": 791,
+      "x": 169,
+      "y": 961,
       "text": "Prompt Dry",
       "isAcceptState": false,
       "textOnly": false
     },
     {
-      "x": 398,
-      "y": 1235,
+      "x": 459,
+      "y": 1405,
       "text": "Prompt Wet",
       "isAcceptState": false,
       "textOnly": false
     },
     {
-      "x": 600,
-      "y": 1235,
+      "x": 661,
+      "y": 1405,
       "text": "Calibration Done",
       "isAcceptState": false,
       "textOnly": false
     },
     {
-      "x": 108,
-      "y": 596,
+      "x": 169,
+      "y": 766,
       "text": "Red Flash",
       "isAcceptState": false,
       "textOnly": false
     },
     {
-      "x": 737,
-      "y": 982,
+      "x": 798,
+      "y": 1152,
       "text": "Pump CD",
       "isAcceptState": false,
       "textOnly": false
     },
     {
-      "x": 554,
-      "y": 176,
+      "x": 645,
+      "y": 339,
       "text": "No Water",
       "isAcceptState": false,
       "textOnly": false
     },
     {
-      "x": 1043,
-      "y": 210,
-      "text": "Sensor Fail",
-      "isAcceptState": false,
-      "textOnly": false
-    },
-    {
-      "x": 156,
-      "y": 973,
+      "x": 217,
+      "y": 1143,
       "text": "Button Pressed",
       "isAcceptState": false,
       "textOnly": false
     },
     {
-      "x": 239,
-      "y": 1117,
+      "x": 300,
+      "y": 1287,
       "text": "Yield",
+      "isAcceptState": false,
+      "textOnly": false
+    },
+    {
+      "x": 1014,
+      "y": 339,
+      "text": "Temp Fail",
+      "isAcceptState": false,
+      "textOnly": false
+    },
+    {
+      "x": 1245,
+      "y": 529,
+      "text": "Moist Fail",
       "isAcceptState": false,
       "textOnly": false
     }
@@ -150,7 +157,7 @@
       "type": "SelfLink",
       "node": 4,
       "text": "Button held",
-      "anchorAngle": -2.227165244687
+      "anchorAngle": -2.54115857889805
     },
     {
       "type": "Link",
@@ -183,7 +190,7 @@
       "type": "SelfLink",
       "node": 1,
       "text": "While (not pump on too long & water threshold low)",
-      "anchorAngle": 0.393518698366499
+      "anchorAngle": 0.507946818470784
     },
     {
       "type": "Link",
@@ -253,30 +260,6 @@
     },
     {
       "type": "Link",
-      "nodeA": 3,
-      "nodeB": 11,
-      "text": "Sensor fail detected",
-      "lineAngleAdjust": 0,
-      "parallelPart": 0.732870454960716,
-      "perpendicularPart": 68.9139470865756
-    },
-    {
-      "type": "Link",
-      "nodeA": 11,
-      "nodeB": 3,
-      "text": "No sensor failure",
-      "lineAngleAdjust": 0,
-      "parallelPart": 0.415987575369998,
-      "perpendicularPart": 0
-    },
-    {
-      "type": "SelfLink",
-      "node": 11,
-      "text": "Sensor fail not resolved",
-      "anchorAngle": 0
-    },
-    {
-      "type": "Link",
       "nodeA": 7,
       "nodeB": 4,
       "text": "",
@@ -296,7 +279,7 @@
     {
       "type": "Link",
       "nodeA": 5,
-      "nodeB": 12,
+      "nodeB": 11,
       "text": "Button Press",
       "lineAngleAdjust": 0,
       "parallelPart": 0.5,
@@ -304,23 +287,14 @@
     },
     {
       "type": "SelfLink",
-      "node": 12,
+      "node": 11,
       "text": "Button Pressed",
-      "anchorAngle": -0.485622093297469
+      "anchorAngle": -0.644543970796084
     },
     {
       "type": "Link",
-      "nodeA": 2,
-      "nodeB": 11,
-      "text": "Sensor fail detected",
-      "lineAngleAdjust": 0,
-      "parallelPart": 0.645011803794701,
-      "perpendicularPart": 146.33839292077
-    },
-    {
-      "type": "Link",
-      "nodeA": 12,
-      "nodeB": 13,
+      "nodeA": 11,
+      "nodeB": 12,
       "text": "Pressed \u003E 3000 ms",
       "lineAngleAdjust": 0,
       "parallelPart": 0.5,
@@ -328,7 +302,7 @@
     },
     {
       "type": "Link",
-      "nodeA": 13,
+      "nodeA": 12,
       "nodeB": 6,
       "text": "Button released",
       "lineAngleAdjust": 0,
@@ -337,9 +311,84 @@
     },
     {
       "type": "SelfLink",
-      "node": 13,
+      "node": 12,
       "text": "Button held",
-      "anchorAngle": -0.872136502073433
+      "anchorAngle": 2.8886067734348
+    },
+    {
+      "type": "Link",
+      "nodeA": 3,
+      "nodeB": 13,
+      "text": "Fail Flag",
+      "lineAngleAdjust": 0,
+      "parallelPart": 0.5,
+      "perpendicularPart": 0
+    },
+    {
+      "type": "Link",
+      "nodeA": 1,
+      "nodeB": 13,
+      "text": "Fail Flag",
+      "lineAngleAdjust": 0,
+      "parallelPart": 0.569492522939461,
+      "perpendicularPart": 59.9386883890598
+    },
+    {
+      "type": "SelfLink",
+      "node": 13,
+      "text": "Temp Reading False",
+      "anchorAngle": -0.830821442819025
+    },
+    {
+      "type": "Link",
+      "nodeA": 13,
+      "nodeB": 4,
+      "text": "Fail Flag Resolved",
+      "lineAngleAdjust": 0,
+      "parallelPart": 0.675318812775082,
+      "perpendicularPart": 295.289161626627
+    },
+    {
+      "type": "Link",
+      "nodeA": 3,
+      "nodeB": 14,
+      "text": "Fail Flag",
+      "lineAngleAdjust": 0,
+      "parallelPart": 0.5,
+      "perpendicularPart": 0
+    },
+    {
+      "type": "Link",
+      "nodeA": 1,
+      "nodeB": 14,
+      "text": "Fail Flag",
+      "lineAngleAdjust": 0,
+      "parallelPart": 0.74776907803544,
+      "perpendicularPart": 34.5802904263412
+    },
+    {
+      "type": "SelfLink",
+      "node": 14,
+      "text": "Fail Flag",
+      "anchorAngle": -0.479519291992596
+    },
+    {
+      "type": "Link",
+      "nodeA": 14,
+      "nodeB": 4,
+      "text": "Fail Flag Resolved",
+      "lineAngleAdjust": 3.14159265358979,
+      "parallelPart": 0.702223197285339,
+      "perpendicularPart": 405.775065196482
+    },
+    {
+      "type": "Link",
+      "nodeA": 11,
+      "nodeB": 14,
+      "text": "Fail Flag",
+      "lineAngleAdjust": 0,
+      "parallelPart": 0.82613790121218,
+      "perpendicularPart": 264.697291286051
     }
   ],
   "nodeRadius": 60,
