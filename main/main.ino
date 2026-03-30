@@ -78,7 +78,7 @@ const int IDEAL_MOISTURE_DRY = 210; // Read from A0 with moisture sensor in damp
 // Base thresholds (in % moisture)
 const float ON_THRESHOLD_BASE  = 0.25;  // water when moisture drops below this
 const float OFF_THRESHOLD_BASE = 0.75;  // stop when moisture rises above this, too wet!
-const int WATER_THRESHOLD = 100; // Threshold for when we detect current going thru the water to verify that the water is in the container.
+const int WATER_THRESHOLD = 500; // Threshold for when we detect current going thru the water to verify that the water is in the container.
 const float MOIST_FAIL_GRACE = 0.20f; // The percent +/- added to the threshold clamp to ensure proper operation of the moisture sensor
 const int MIN_RAW_MOIST = 15; // Minimum moisture necessary to ensure proper sensor operation
 
@@ -471,7 +471,7 @@ void loop() {
       float onThreshold = getAdjustedOnThreshold(lastTempC, lastHumidity);
 
       int rawWaterPresent = analogRead(WATER_READ);
-      bool waterPresent = true; //rawWaterPresent >= WATER_THRESHOLD;
+      bool waterPresent = rawWaterPresent >= WATER_THRESHOLD;
 
       // Debug output
       Serial.print("rawMoist=");   Serial.print(rawMoist);
@@ -520,13 +520,16 @@ void loop() {
       int rawMoist;
       float moistPct = readMoistureSensor(&rawMoist);
 
+      int rawWaterPresent = analogRead(WATER_READ);
+      bool waterPresent = rawWaterPresent >= WATER_THRESHOLD;
+
       readDHT(); // Read temp to find failure
       Serial.print(" moist%=");    Serial.println(moistPct, 2);
 
       bool pumpTooLong = (now - pumpStartMs) > MAX_PUMP_ON_MS;
 
       // Exit conditions: moisture satisfied OR pump safety timeout
-      if (moistPct >= OFF_THRESHOLD_BASE || pumpTooLong) {
+      if (moistPct >= OFF_THRESHOLD_BASE || pumpTooLong || !waterPresent) {
         currentState = State::PumpOff;
         break;
       }
