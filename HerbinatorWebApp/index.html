@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Herbinator - Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- =====================================================
+       MAIN DASHBOARD
+
+       This page is served when the ESP32 is connected to WiFi
+       and operating normally (not in captive portal mode).
+
+       It manages all connected Herbinator units via the ESP32
+       hub. The ESP32 communicates with Arduino nodes over I2C
+       or RS-485, and this page displays their data.
+
+       BACKEND INTEGRATION NOTES:
+       - Unit list:        GET  /api/units
+       - Unit detail:      GET  /api/units/:id
+       - Add unit:         POST /api/units
+       - Rename unit:      PUT  /api/units/:id/name
+       - Reset unit:       POST /api/units/:id/reset
+       - Manual water:     POST /api/units/:id/water
+       - Hub status:       GET  /api/hub/status
+       - Hub settings:     GET  /api/hub/settings
+
+       All data on this page is mock/static for the prototype.
+       When the backend is implemented, JS will fetch data from
+       these endpoints and update the DOM dynamically.
+       ===================================================== -->
+
+  <header class="app-header">
+    <h1>HERBNET</h1>
+    <p class="subtitle">Plant Management Dashboard</p>
+  </header>
+
+  <!-- ======================
+       HUB CONNECTION BANNER
+
+       Shows whether the ESP32 hub is online and connected to WiFi.
+       Toggle between "online" and "offline" classes with JS.
+       When offline, the wired bus still operates — plants get
+       watered — but the user can't see live data remotely.
+       ====================== -->
+  <div class="status-banner online" id="hub-status-banner">
+    <span class="status-dot green"></span>
+    Hub Online — Connected to HomeNetwork_5G
+  </div>
+
+  <!-- Uncomment below to preview the offline state:
+  <div class="status-banner offline" id="hub-status-banner">
+    <span class="status-dot red"></span>
+    Hub Offline — Local watering still active
+  </div>
+  -->
+
+  <main class="container">
+
+    <!-- ======================
+         ACTION BAR
+
+         Top-level controls: add a new unit, refresh data.
+         These sit above the unit cards so they're always
+         accessible without scrolling.
+         ====================== -->
+    <div class="flex-between mt-md mb-md">
+      <h2>My Plants</h2>
+      <div class="flex-row">
+        <!-- data-action attributes are hooks for JS event listeners.
+             This pattern keeps your HTML and JS loosely coupled —
+             you can rearrange the HTML without breaking JS. -->
+        <button class="btn btn-sm btn-outline" data-action="refresh-all">
+          Refresh
+        </button>
+        <button class="btn btn-sm btn-primary" data-action="open-add-modal">
+          + Add Unit
+        </button>
+      </div>
+    </div>
+
+    <!-- ======================
+         UNIT CARDS
+
+         Each card represents one Herbinator node (Arduino unit)
+         connected to the ESP32 hub. The data-unit-id attribute
+         stores the node's I2C address or internal ID so the
+         backend knows which node to target for commands.
+
+         In production, these cards are generated dynamically by
+         JS from the /api/units response. For the prototype,
+         we show 3 example units in different states.
+         ====================== -->
+
+    <!-- ---- UNIT 1: Healthy plant, idle state ---- -->
+    <div class="card" data-unit-id="1">
+      <div class="card-header">
+        <h2>
+          <span class="status-dot green"></span>
+          <!-- The unit name is editable by the user.
+               Clicking a future "edit" icon could swap this
+               to an <input> for inline renaming. -->
+          Basil Kitchen
+        </h2>
+        <span class="state-badge idle">Idle</span>
+      </div>
+
+      <!-- Sensor readings in a 2-column grid.
+           Each .sensor-item shows one measurement.
+           The .value class gets a color modifier (good/warn/bad)
+           to give instant visual feedback on plant health. -->
+      <div class="sensor-grid">
+        <div class="sensor-item">
+          <div class="label">Moisture</div>
+          <div class="value good">72%</div>
+          <!-- Progress bar gives a visual representation alongside
+               the number. Width is set inline — JS will update this. -->
+          <div class="progress-bar">
+            <div class="fill green" style="width: 72%;"></div>
+          </div>
+        </div>
+
+        <div class="sensor-item">
+          <div class="label">Temperature</div>
+          <div class="value good">23.5 C</div>
+        </div>
+
+        <div class="sensor-item">
+          <div class="label">Humidity</div>
+          <div class="value good">55%</div>
+        </div>
+
+        <div class="sensor-item">
+          <div class="label">Water Level</div>
+          <div class="value good">OK</div>
+          <div class="progress-bar">
+            <div class="fill green" style="width: 80%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Meta info row: secondary details that don't need
+           the visual weight of the sensor grid -->
+      <div class="unit-meta">
+        <span>Last watered: 2h ago</span>
+        <span>Battery: 87%</span>
+        <span>Node ID: 0x10</span>
+      </div>
+
+      <!-- Action buttons for this specific unit -->
+      <div class="unit-actions">
+        <!-- Manual water trigger — POST /api/units/1/water -->
+        <button class="btn btn-sm btn-primary" data-action="water" data-unit-id="1">
+          Water Now
+        </button>
+        <!-- Emergency reset — POST /api/units/1/reset
+             This sends a reset command over the I2C/RS-485 bus
+             to restart the Arduino node's microcontroller. -->
+        <button class="btn btn-sm btn-danger" data-action="reset" data-unit-id="1">
+          Emergency Reset
+        </button>
+        <button class="btn btn-sm btn-outline" data-action="rename" data-unit-id="1">
+          Rename
+        </button>
+      </div>
+    </div>
+
+    <!-- ---- UNIT 2: Dry plant, needs watering ---- -->
+    <div class="card" data-unit-id="2">
+      <div class="card-header">
+        <h2>
+          <span class="status-dot yellow"></span>
+          Tomato Window
+        </h2>
+        <!-- "watering" state means the pump is currently active -->
+        <span class="state-badge watering">Watering</span>
+      </div>
+
+      <div class="sensor-grid">
+        <div class="sensor-item">
+          <div class="label">Moisture</div>
+          <!-- warn class turns the value yellow to indicate
+               moisture is below optimal but not critical -->
+          <div class="value warn">28%</div>
+          <div class="progress-bar">
+            <div class="fill yellow" style="width: 28%;"></div>
+          </div>
+        </div>
+
+        <div class="sensor-item">
+          <div class="label">Temperature</div>
+          <div class="value good">26.1 C</div>
+        </div>
+
+        <div class="sensor-item">
+          <div class="label">Humidity</div>
+          <div class="value warn">38%</div>
+        </div>
+
+        <div class="sensor-item">
+          <div class="label">Water Level</div>
+          <div class="value warn">Low</div>
+          <div class="progress-bar">
+            <div class="fill yellow" style="width: 25%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="unit-meta">
+        <span>Last watered: Just now</span>
+        <span>Battery: 54%</span>
+        <span>Node ID: 0x11</span>
+      </div>
+
+      <div class="unit-actions">
+        <button class="btn btn-sm btn-primary" data-action="water" data-unit-id="2">
+          Water Now
+        </button>
+        <button class="btn btn-sm btn-danger" data-action="reset" data-unit-id="2">
+          Emergency Reset
+        </button>
+        <button class="btn btn-sm btn-outline" data-action="rename" data-unit-id="2">
+          Rename
+        </button>
+      </div>
+    </div>
+
+    <!-- ---- UNIT 3: Error state — sensor disconnected ---- -->
+    <div class="card" data-unit-id="3">
+      <div class="card-header">
+        <h2>
+          <span class="status-dot red"></span>
+          Succulent Desk
+        </h2>
+        <!-- Error state means something is wrong — the unit
+             has reported a sensor failure or communication issue -->
+        <span class="state-badge error">Sensor Error</span>
+      </div>
+
+      <div class="sensor-grid">
+        <div class="sensor-item">
+          <div class="label">Moisture</div>
+          <!-- "- -" indicates no data available due to error.
+               The bad class turns it red. -->
+          <div class="value bad">- -</div>
+          <div class="progress-bar">
+            <div class="fill red" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <div class="sensor-item">
+          <div class="label">Temperature</div>
+          <div class="value bad">- -</div>
+        </div>
+
+        <div class="sensor-item">
+          <div class="label">Humidity</div>
+          <div class="value bad">- -</div>
+        </div>
+
+        <div class="sensor-item">
+          <div class="label">Water Level</div>
+          <div class="value good">OK</div>
+          <div class="progress-bar">
+            <div class="fill green" style="width: 90%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="unit-meta">
+        <span>Last watered: 6h ago</span>
+        <span>Battery: 12%</span>
+        <span>Node ID: 0x12</span>
+      </div>
+
+      <div class="unit-actions">
+        <button class="btn btn-sm btn-primary" data-action="water" data-unit-id="3">
+          Water Now
+        </button>
+        <button class="btn btn-sm btn-danger" data-action="reset" data-unit-id="3">
+          Emergency Reset
+        </button>
+        <button class="btn btn-sm btn-outline" data-action="rename" data-unit-id="3">
+          Rename
+        </button>
+      </div>
+    </div>
+
+    <!-- ---- UNIT 4: Sleeping state example ---- -->
+    <div class="card" data-unit-id="4">
+      <div class="card-header">
+        <h2>
+          <span class="status-dot yellow"></span>
+          Mint Balcony
+        </h2>
+        <!-- Sleeping = node MCU is in deep sleep between reads.
+             The hub's last polled data is shown (may be stale). -->
+        <span class="state-badge sleeping">Sleeping</span>
+      </div>
+
+      <div class="sensor-grid">
+        <div class="sensor-item">
+          <div class="label">Moisture</div>
+          <div class="value good">61%</div>
+          <div class="progress-bar">
+            <div class="fill green" style="width: 61%;"></div>
+          </div>
+        </div>
+
+        <div class="sensor-item">
+          <div class="label">Temperature</div>
+          <div class="value good">21.8 C</div>
+        </div>
+
+        <div class="sensor-item">
+          <div class="label">Humidity</div>
+          <div class="value good">52%</div>
+        </div>
+
+        <div class="sensor-item">
+          <div class="label">Water Level</div>
+          <div class="value good">OK</div>
+          <div class="progress-bar">
+            <div class="fill green" style="width: 65%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="unit-meta">
+        <span>Last watered: 18h ago</span>
+        <span>Battery: 93%</span>
+        <span>Node ID: 0x13</span>
+      </div>
+
+      <div class="unit-actions">
+        <button class="btn btn-sm btn-primary" data-action="water" data-unit-id="4">
+          Water Now
+        </button>
+        <button class="btn btn-sm btn-danger" data-action="reset" data-unit-id="4">
+          Emergency Reset
+        </button>
+        <button class="btn btn-sm btn-outline" data-action="rename" data-unit-id="4">
+          Rename
+        </button>
+      </div>
+    </div>
+
+    <!-- ======================
+         EMPTY STATE
+
+         This is what shows when no units are connected yet.
+         Hidden here because we have mock units above.
+         Remove style="display:none" and hide the unit cards
+         to see this state.
+         ====================== -->
+    <div class="empty-state" id="empty-state" style="display: none;">
+      <div class="icon">&#127793;</div>
+      <h2>No Herbinator Units Connected</h2>
+      <p class="text-muted mt-sm">
+        Click "+ Add Unit" to connect your first plant monitor.
+      </p>
+    </div>
+
+  </main>
+
+  <!-- ======================
+       ADD UNIT MODAL
+
+       A dialog that appears when the user clicks "+ Add Unit".
+       The ESP32 scans the I2C bus for new Arduino nodes that
+       haven't been registered yet.
+
+       The .modal-overlay covers the screen with a dark layer.
+       Adding the .active class (via JS) shows the modal.
+       Removing it hides the modal.
+       ====================== -->
+  <div class="modal-overlay" id="add-unit-modal">
+    <div class="modal-content">
+      <div class="flex-between mb-md">
+        <h2>Add New Unit</h2>
+        <!-- data-action="close-modal" is the JS hook.
+             &times; is the HTML entity for the X character. -->
+        <button class="btn btn-sm btn-outline" data-action="close-modal">&times;</button>
+      </div>
+
+      <p class="text-muted" style="font-size: 0.85rem; margin-bottom: var(--spacing-md);">
+        The hub will scan the I2C bus for unregistered Arduino nodes.
+        Make sure your new Herbinator unit is powered on and connected
+        to the bus cable.
+      </p>
+
+      <!-- Discovered nodes section — populated by JS after scanning.
+           For the prototype, we show one discovered node as an example. -->
+      <div class="card" style="border-color: var(--color-success);">
+        <div class="flex-between">
+          <div>
+            <p style="font-weight: 600;">New Node Detected</p>
+            <p class="text-muted" style="font-size: 0.8rem;">Address: 0x14</p>
+          </div>
+          <span class="state-badge watering">Found</span>
+        </div>
+      </div>
+
+      <!-- Form to register the new node with a custom name -->
+      <form action="/api/units" method="POST" id="add-unit-form">
+        <div class="form-group">
+          <label for="unit-name">Give it a name</label>
+          <input
+            type="text"
+            id="unit-name"
+            name="name"
+            placeholder="e.g., Rosemary Kitchen"
+            required
+          >
+        </div>
+
+        <!-- The node address is auto-detected; stored in a hidden field
+             so the backend knows which I2C address to register -->
+        <input type="hidden" name="address" value="0x14">
+
+        <button type="submit" class="btn btn-primary btn-block">
+          Register Unit
+        </button>
+      </form>
+
+      <button
+        class="btn btn-outline btn-block mt-md"
+        data-action="scan-bus"
+      >
+        Scan Again
+      </button>
+    </div>
+  </div>
+
+  <!-- ======================
+       CONFIRM RESET MODAL
+
+       Safety confirmation before sending an emergency reset.
+       Resetting a node restarts its microcontroller, which
+       stops any active watering and re-initializes sensors.
+       ====================== -->
+  <div class="modal-overlay" id="reset-confirm-modal">
+    <div class="modal-content text-center">
+      <h2 style="color: var(--color-danger);">Emergency Reset</h2>
+      <p class="mt-md">
+        This will restart the unit's microcontroller. Any active
+        watering will stop immediately.
+      </p>
+      <p class="text-muted mt-sm" style="font-size: 0.85rem;">
+        Unit: <strong id="reset-unit-name">—</strong>
+      </p>
+
+      <div class="flex-row mt-lg" style="justify-content: center;">
+        <button class="btn btn-outline" data-action="close-modal">Cancel</button>
+        <!-- data-action="confirm-reset" triggers the actual
+             POST /api/units/:id/reset call -->
+        <button class="btn btn-danger" data-action="confirm-reset">
+          Confirm Reset
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================
+       RENAME MODAL
+
+       Simple dialog to change a unit's display name.
+       ====================== -->
+  <div class="modal-overlay" id="rename-modal">
+    <div class="modal-content">
+      <div class="flex-between mb-md">
+        <h2>Rename Unit</h2>
+        <button class="btn btn-sm btn-outline" data-action="close-modal">&times;</button>
+      </div>
+
+      <form action="/api/units/rename" method="POST" id="rename-form">
+        <div class="form-group">
+          <label for="new-name">New Name</label>
+          <input
+            type="text"
+            id="new-name"
+            name="name"
+            placeholder="Enter a new name"
+            required
+          >
+        </div>
+        <input type="hidden" name="unit_id" id="rename-unit-id" value="">
+        <button type="submit" class="btn btn-primary btn-block">
+          Save Name
+        </button>
+      </form>
+    </div>
+  </div>
+
+</body>
+</html>
