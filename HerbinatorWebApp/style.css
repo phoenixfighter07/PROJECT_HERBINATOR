@@ -1,0 +1,522 @@
+/* ============================================================
+   HERBINATOR WEB APP - SHARED STYLES
+
+   This CSS file is shared between the captive portal and the
+   main dashboard. It uses CSS custom properties (variables) so
+   you can tweak the whole color scheme from one place.
+
+   ESP32 NOTE: The ESP32 serves files from SPIFFS or LittleFS.
+   Keep this file small — every byte counts on a microcontroller
+   with limited flash storage.
+   ============================================================ */
+
+/* -- CSS Variables --
+   Define your color palette and spacing here.
+   Changing these values updates the entire app's look. */
+:root {
+  --color-bg: #1a1a2e;
+  --color-surface: #16213e;
+  --color-surface-hover: #1a2744;
+  --color-primary: #0f3460;
+  --color-accent: #e94560;
+  --color-accent-hover: #d63851;
+  --color-success: #4ecca3;
+  --color-warning: #f5a623;
+  --color-danger: #e94560;
+  --color-text: #eaeaea;
+  --color-text-muted: #a0a0b0;
+  --color-border: #2a2a4a;
+  --radius: 8px;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+}
+
+/* -- Reset & Base --
+   A minimal reset so elements behave consistently across browsers.
+   box-sizing: border-box makes padding included in width/height
+   calculations, which is much easier to work with. */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.5;
+  /* min-height: 100vh ensures the background fills the screen
+     even if content is short */
+  min-height: 100vh;
+}
+
+/* -- Typography -- */
+h1, h2, h3 {
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+h1 { font-size: 1.5rem; }
+h2 { font-size: 1.25rem; }
+h3 { font-size: 1rem; }
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+/* -- Layout Utilities --
+   Simple reusable layout classes. Using these keeps your HTML
+   cleaner than writing inline styles everywhere. */
+.container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: var(--spacing-md);
+}
+
+.flex-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.text-center { text-align: center; }
+.text-muted { color: var(--color-text-muted); }
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mt-lg { margin-top: var(--spacing-lg); }
+.mb-md { margin-bottom: var(--spacing-md); }
+
+/* -- App Header --
+   The top bar with the Herbinator logo/title. */
+.app-header {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--spacing-md);
+  text-align: center;
+}
+
+.app-header h1 {
+  color: var(--color-success);
+  letter-spacing: 1px;
+}
+
+.app-header .subtitle {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+/* -- Status Banner --
+   A full-width bar that shows hub connection state.
+   Toggle between .online and .offline classes with JS later. */
+.status-banner {
+  padding: var(--spacing-sm) var(--spacing-md);
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.status-banner.online {
+  background: var(--color-success);
+  color: #1a1a2e;
+}
+
+.status-banner.offline {
+  background: var(--color-danger);
+  color: #fff;
+}
+
+/* -- Status Dot --
+   A small colored circle used next to text to indicate state.
+   The color is set by adding a modifier class. */
+.status-dot {
+  /* inline-block so it sits on the same line as text */
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: var(--spacing-xs);
+}
+
+.status-dot.green { background: var(--color-success); }
+.status-dot.yellow { background: var(--color-warning); }
+.status-dot.red { background: var(--color-danger); }
+
+/* -- Cards --
+   The main UI building block. Each Herbinator unit gets a card.
+   Cards are also used for the WiFi form on the captive portal. */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  /* transition makes hover effects smooth instead of instant */
+  transition: border-color 0.2s ease;
+}
+
+.card:hover {
+  border-color: var(--color-success);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+  /* padding-bottom + border creates a visual separator between
+     the card title and its content */
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.card-header h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+/* -- Sensor Data Grid --
+   A 2-column grid that displays moisture, temp, humidity, etc.
+   CSS Grid is ideal here because we want equal-width columns
+   that automatically wrap on small screens. */
+.sensor-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-sm);
+}
+
+.sensor-item {
+  background: var(--color-primary);
+  border-radius: var(--radius);
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.sensor-item .label {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sensor-item .value {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+/* Color-coded sensor values to draw the eye to problems */
+.value.good { color: var(--color-success); }
+.value.warn { color: var(--color-warning); }
+.value.bad { color: var(--color-danger); }
+
+/* -- State Badge --
+   Shows the current operating state of a unit (e.g., "Watering",
+   "Idle", "Error"). The background color changes per state. */
+.state-badge {
+  display: inline-block;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.state-badge.idle {
+  background: var(--color-primary);
+  color: var(--color-text-muted);
+}
+
+.state-badge.watering {
+  background: rgba(78, 204, 163, 0.2);
+  color: var(--color-success);
+}
+
+.state-badge.error {
+  background: rgba(233, 69, 96, 0.2);
+  color: var(--color-danger);
+}
+
+.state-badge.sleeping {
+  background: rgba(245, 166, 35, 0.15);
+  color: var(--color-warning);
+}
+
+/* -- Progress Bars --
+   Used for moisture level and water reservoir level.
+   The outer element is the track, the inner .fill is the bar.
+   Width of .fill is set via inline style in HTML (or JS later). */
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--color-primary);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: var(--spacing-xs);
+}
+
+.progress-bar .fill {
+  height: 100%;
+  border-radius: 4px;
+  /* transition animates the width change when data updates */
+  transition: width 0.5s ease;
+}
+
+.progress-bar .fill.green { background: var(--color-success); }
+.progress-bar .fill.yellow { background: var(--color-warning); }
+.progress-bar .fill.red { background: var(--color-danger); }
+
+/* -- Buttons --
+   Base button style + variants. All buttons share the same size
+   and shape; only colors differ between variants. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+/* slight scale-down on click gives tactile feedback */
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-primary {
+  background: var(--color-success);
+  color: var(--color-bg);
+}
+
+.btn-primary:hover {
+  background: #3db88e;
+}
+
+.btn-danger {
+  background: var(--color-danger);
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: var(--color-accent-hover);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.btn-outline:hover {
+  border-color: var(--color-success);
+  color: var(--color-success);
+}
+
+/* Full-width button variant */
+.btn-block {
+  width: 100%;
+  justify-content: center;
+}
+
+/* Small button variant for inline actions */
+.btn-sm {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: 0.75rem;
+}
+
+/* -- Form Inputs --
+   Styled for the captive portal WiFi form. */
+.form-group {
+  margin-bottom: var(--spacing-md);
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-xs);
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--color-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  color: var(--color-text);
+  font-size: 0.95rem;
+  /* outline: none removes the default blue browser focus ring
+     so we can replace it with our own style below */
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--color-success);
+}
+
+/* placeholder text color */
+.form-group input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.6;
+}
+
+/* -- Info/Help Text -- */
+.help-text {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-top: var(--spacing-xs);
+}
+
+/* -- Unit Meta Info --
+   Small details like "Last watered", "Battery", shown below
+   the sensor grid on each unit card. */
+.unit-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm) var(--spacing-md);
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--color-border);
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+/* -- Unit Actions --
+   The row of buttons at the bottom of each unit card. */
+.unit-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+}
+
+/* -- Empty State --
+   Shown when no Herbinator units are connected yet. */
+.empty-state {
+  text-align: center;
+  padding: var(--spacing-xl) var(--spacing-md);
+  color: var(--color-text-muted);
+}
+
+.empty-state .icon {
+  font-size: 3rem;
+  margin-bottom: var(--spacing-md);
+  /* opacity makes it feel like a background illustration */
+  opacity: 0.4;
+}
+
+/* -- WiFi Network List --
+   Used on captive portal to show discovered networks. */
+.network-list {
+  list-style: none;
+}
+
+.network-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  margin-bottom: var(--spacing-sm);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.network-item:hover {
+  background: var(--color-primary);
+}
+
+.network-item .ssid {
+  font-weight: 500;
+}
+
+.network-item .signal {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+/* -- Modal Overlay --
+   Used for "Add New Unit" or "Confirm Reset" dialogs.
+   The overlay covers the screen with a semi-transparent dark layer.
+   The .modal-content sits centered on top.
+
+   To show/hide: toggle the .active class with JS. */
+.modal-overlay {
+  /* display:none hides it by default */
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  /* z-index ensures it sits above everything else */
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+}
+
+/* When .active is added, switch from none to flex to show it */
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-content {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--spacing-lg);
+  width: 90%;
+  max-width: 400px;
+}
+
+/* -- Scan Animation --
+   A simple pulsing animation for the "Scanning..." state
+   on the captive portal. CSS animations are lightweight and
+   don't need JavaScript. */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.scanning {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* -- Responsive Adjustments --
+   @media queries let you change styles based on screen width.
+   The ESP32 captive portal is typically viewed on a phone,
+   so mobile-first design is important here. */
+@media (max-width: 400px) {
+  .sensor-grid {
+    /* Switch to single column on very small screens */
+    grid-template-columns: 1fr;
+  }
+
+  .unit-actions {
+    flex-direction: column;
+  }
+
+  .btn-block-mobile {
+    width: 100%;
+    justify-content: center;
+  }
+}

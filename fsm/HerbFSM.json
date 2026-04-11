@@ -1,44 +1,107 @@
 {
   "nodes": [
     {
-      "x": 488,
-      "y": 139,
+      "x": 284,
+      "y": 497,
       "text": "Init",
       "isAcceptState": false,
       "textOnly": false
     },
     {
-      "x": 731,
-      "y": 321,
-      "text": "Read ",
+      "x": 798,
+      "y": 718,
+      "text": "Pump On",
       "isAcceptState": false,
       "textOnly": false
     },
     {
-      "x": 615,
-      "y": 390,
-      "text": "Enable Pump",
+      "x": 798,
+      "y": 944,
+      "text": "Pump Off",
       "isAcceptState": false,
       "textOnly": false
     },
     {
-      "x": 853,
-      "y": 390,
-      "text": "Disable Pump",
+      "x": 782,
+      "y": 497,
+      "text": "Water Loop",
       "isAcceptState": false,
       "textOnly": false
     },
     {
-      "x": 731,
-      "y": 139,
-      "text": "Loop",
+      "x": 478,
+      "y": 497,
+      "text": "Main Loop",
       "isAcceptState": false,
       "textOnly": false
     },
     {
-      "x": 731,
-      "y": 514,
-      "text": "Error",
+      "x": 169,
+      "y": 961,
+      "text": "Prompt Dry",
+      "isAcceptState": false,
+      "textOnly": false
+    },
+    {
+      "x": 459,
+      "y": 1405,
+      "text": "Prompt Wet",
+      "isAcceptState": false,
+      "textOnly": false
+    },
+    {
+      "x": 661,
+      "y": 1405,
+      "text": "Calibration Done",
+      "isAcceptState": false,
+      "textOnly": false
+    },
+    {
+      "x": 169,
+      "y": 766,
+      "text": "Red Flash",
+      "isAcceptState": false,
+      "textOnly": false
+    },
+    {
+      "x": 798,
+      "y": 1152,
+      "text": "Pump CD",
+      "isAcceptState": false,
+      "textOnly": false
+    },
+    {
+      "x": 645,
+      "y": 339,
+      "text": "No Water",
+      "isAcceptState": false,
+      "textOnly": false
+    },
+    {
+      "x": 217,
+      "y": 1143,
+      "text": "Button Pressed",
+      "isAcceptState": false,
+      "textOnly": false
+    },
+    {
+      "x": 300,
+      "y": 1287,
+      "text": "Yield",
+      "isAcceptState": false,
+      "textOnly": false
+    },
+    {
+      "x": 1014,
+      "y": 339,
+      "text": "Temp Fail",
+      "isAcceptState": false,
+      "textOnly": false
+    },
+    {
+      "x": 1245,
+      "y": 529,
+      "text": "Moist Fail",
       "isAcceptState": false,
       "textOnly": false
     }
@@ -53,24 +116,6 @@
     },
     {
       "type": "Link",
-      "nodeA": 1,
-      "nodeB": 2,
-      "text": "Water Threshold Low & Water Present & Pump Off & Pump CD done",
-      "lineAngleAdjust": 0,
-      "parallelPart": 0.3942115391872,
-      "perpendicularPart": 26.7520475872655
-    },
-    {
-      "type": "Link",
-      "nodeA": 1,
-      "nodeB": 3,
-      "text": "Pump On & (!Water Present | Pump on Too long | Water Threshold High)",
-      "lineAngleAdjust": 3.14159265358979,
-      "parallelPart": 0.49288067452119,
-      "perpendicularPart": -26.4450805633383
-    },
-    {
-      "type": "Link",
       "nodeA": 0,
       "nodeB": 4,
       "text": "",
@@ -79,58 +124,274 @@
       "perpendicularPart": 0
     },
     {
+      "type": "Link",
+      "nodeA": 4,
+      "nodeB": 3,
+      "text": "Watering Mode",
+      "lineAngleAdjust": 3.14159265358979,
+      "parallelPart": 0.513725490196078,
+      "perpendicularPart": -9
+    },
+    {
       "type": "SelfLink",
-      "node": 4,
-      "text": "Last Update \u003C 1000 ms",
-      "anchorAngle": -2.06473769571448
+      "node": 5,
+      "text": "Wait for button press (hold 2 seconds)",
+      "anchorAngle": 0.154454656708836
+    },
+    {
+      "type": "SelfLink",
+      "node": 6,
+      "text": "Wait for button press (hold 2 seconds)",
+      "anchorAngle": -1.38086477869948
     },
     {
       "type": "Link",
-      "nodeA": 4,
-      "nodeB": 1,
-      "text": "Last Update \u003E= 1000 ms",
+      "nodeA": 6,
+      "nodeB": 7,
+      "text": "Success",
+      "lineAngleAdjust": 0,
+      "parallelPart": 0.505882352941176,
+      "perpendicularPart": 24
+    },
+    {
+      "type": "SelfLink",
+      "node": 4,
+      "text": "Button held",
+      "anchorAngle": -2.54115857889805
+    },
+    {
+      "type": "Link",
+      "nodeA": 8,
+      "nodeB": 5,
+      "text": "",
       "lineAngleAdjust": 0,
       "parallelPart": 0.5,
       "perpendicularPart": 0
     },
     {
       "type": "Link",
-      "nodeA": 5,
-      "nodeB": 4,
-      "text": "",
+      "nodeA": 4,
+      "nodeB": 8,
+      "text": "button held \u003E 3000 ms",
+      "lineAngleAdjust": 0,
+      "parallelPart": 0.817392176529589,
+      "perpendicularPart": 39.869849695531
+    },
+    {
+      "type": "Link",
+      "nodeA": 1,
+      "nodeB": 2,
+      "text": "(Pump on Too Long | Water Threshold High | Sensor Fail | Button Pressed)",
       "lineAngleAdjust": 3.14159265358979,
-      "parallelPart": 0.632540884724578,
-      "perpendicularPart": 41.8747695153311
+      "parallelPart": 0.663716814159292,
+      "perpendicularPart": 0
+    },
+    {
+      "type": "SelfLink",
+      "node": 1,
+      "text": "While (not pump on too long & water threshold low)",
+      "anchorAngle": 0.507946818470784
+    },
+    {
+      "type": "Link",
+      "nodeA": 2,
+      "nodeB": 9,
+      "text": "Pump on Too Long",
+      "lineAngleAdjust": 0,
+      "parallelPart": 0.5,
+      "perpendicularPart": 0
+    },
+    {
+      "type": "SelfLink",
+      "node": 9,
+      "text": "Process cooldown",
+      "anchorAngle": -0.376909270324821
     },
     {
       "type": "Link",
       "nodeA": 2,
       "nodeB": 4,
-      "text": "",
+      "text": "Pump not on too long | Button Pressed",
+      "lineAngleAdjust": 0,
+      "parallelPart": 0.229543130747264,
+      "perpendicularPart": -56.0142215875779
+    },
+    {
+      "type": "Link",
+      "nodeA": 9,
+      "nodeB": 4,
+      "text": "Cooldown done",
+      "lineAngleAdjust": 0,
+      "parallelPart": 0.342278843722786,
+      "perpendicularPart": -170.990662914512
+    },
+    {
+      "type": "Link",
+      "nodeA": 3,
+      "nodeB": 1,
+      "text": "Water Threshold Low & Water Present",
       "lineAngleAdjust": 3.14159265358979,
-      "parallelPart": 0.329806296349582,
-      "perpendicularPart": -41.0439329408006
+      "parallelPart": 0.712894881560992,
+      "perpendicularPart": -7.61355701914265
+    },
+    {
+      "type": "Link",
+      "nodeA": 3,
+      "nodeB": 10,
+      "text": "Water Not Present",
+      "lineAngleAdjust": 3.14159265358979,
+      "parallelPart": 0.533744263475209,
+      "perpendicularPart": 0
+    },
+    {
+      "type": "SelfLink",
+      "node": 10,
+      "text": "Water Not Present",
+      "anchorAngle": -1.46403131974336
+    },
+    {
+      "type": "Link",
+      "nodeA": 10,
+      "nodeB": 3,
+      "text": "Water Present",
+      "lineAngleAdjust": 3.14159265358979,
+      "parallelPart": 0.504419889502762,
+      "perpendicularPart": -87.8147724141197
+    },
+    {
+      "type": "Link",
+      "nodeA": 7,
+      "nodeB": 4,
+      "text": "",
+      "lineAngleAdjust": 0,
+      "parallelPart": 0.513070063278525,
+      "perpendicularPart": 101.900386875744
     },
     {
       "type": "Link",
       "nodeA": 3,
       "nodeB": 4,
-      "text": "Water  Present",
+      "text": "Water Threshold High",
       "lineAngleAdjust": 0,
-      "parallelPart": 0.529010720934712,
-      "perpendicularPart": 43.9624871458386
+      "parallelPart": 0.486274509803922,
+      "perpendicularPart": -37
+    },
+    {
+      "type": "Link",
+      "nodeA": 5,
+      "nodeB": 11,
+      "text": "Button Press",
+      "lineAngleAdjust": 0,
+      "parallelPart": 0.5,
+      "perpendicularPart": 0
+    },
+    {
+      "type": "SelfLink",
+      "node": 11,
+      "text": "Button Pressed",
+      "anchorAngle": -0.644543970796084
+    },
+    {
+      "type": "Link",
+      "nodeA": 11,
+      "nodeB": 12,
+      "text": "Pressed \u003E 3000 ms",
+      "lineAngleAdjust": 0,
+      "parallelPart": 0.5,
+      "perpendicularPart": 0
+    },
+    {
+      "type": "Link",
+      "nodeA": 12,
+      "nodeB": 6,
+      "text": "Button released",
+      "lineAngleAdjust": 0,
+      "parallelPart": 0.5,
+      "perpendicularPart": 0
+    },
+    {
+      "type": "SelfLink",
+      "node": 12,
+      "text": "Button held",
+      "anchorAngle": 2.8886067734348
+    },
+    {
+      "type": "Link",
+      "nodeA": 3,
+      "nodeB": 13,
+      "text": "Fail Flag",
+      "lineAngleAdjust": 0,
+      "parallelPart": 0.5,
+      "perpendicularPart": 0
     },
     {
       "type": "Link",
       "nodeA": 1,
-      "nodeB": 5,
-      "text": "No Water",
+      "nodeB": 13,
+      "text": "Fail Flag",
+      "lineAngleAdjust": 0,
+      "parallelPart": 0.569492522939461,
+      "perpendicularPart": 59.9386883890598
+    },
+    {
+      "type": "SelfLink",
+      "node": 13,
+      "text": "Temp Reading False",
+      "anchorAngle": -0.830821442819025
+    },
+    {
+      "type": "Link",
+      "nodeA": 13,
+      "nodeB": 4,
+      "text": "Fail Flag Resolved",
+      "lineAngleAdjust": 0,
+      "parallelPart": 0.675318812775082,
+      "perpendicularPart": 295.289161626627
+    },
+    {
+      "type": "Link",
+      "nodeA": 3,
+      "nodeB": 14,
+      "text": "Fail Flag",
       "lineAngleAdjust": 0,
       "parallelPart": 0.5,
       "perpendicularPart": 0
+    },
+    {
+      "type": "Link",
+      "nodeA": 1,
+      "nodeB": 14,
+      "text": "Fail Flag",
+      "lineAngleAdjust": 0,
+      "parallelPart": 0.74776907803544,
+      "perpendicularPart": 34.5802904263412
+    },
+    {
+      "type": "SelfLink",
+      "node": 14,
+      "text": "Fail Flag",
+      "anchorAngle": -0.479519291992596
+    },
+    {
+      "type": "Link",
+      "nodeA": 14,
+      "nodeB": 4,
+      "text": "Fail Flag Resolved",
+      "lineAngleAdjust": 3.14159265358979,
+      "parallelPart": 0.702223197285339,
+      "perpendicularPart": 405.775065196482
+    },
+    {
+      "type": "Link",
+      "nodeA": 11,
+      "nodeB": 14,
+      "text": "Fail Flag",
+      "lineAngleAdjust": 0,
+      "parallelPart": 0.82613790121218,
+      "perpendicularPart": 264.697291286051
     }
   ],
-  "nodeRadius": 30,
+  "nodeRadius": 60,
   "canvasWidth": 1500,
-  "canvasHeight": 600
+  "canvasHeight": 1500
 }

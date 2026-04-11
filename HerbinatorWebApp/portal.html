@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- meta charset tells the browser this file uses UTF-8 encoding -->
+  <meta charset="UTF-8">
+
+  <!-- viewport meta tag is CRITICAL for mobile devices.
+       Without it, phones will render the page at desktop width
+       and everything looks tiny. width=device-width makes the
+       page match the phone's screen width. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Herbinator - WiFi Setup</title>
+
+  <!-- Link to shared stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- =====================================================
+       CAPTIVE PORTAL
+
+       This page is served when the ESP32 is in SoftAP mode.
+       The user connects to the ESP32's WiFi access point
+       (e.g., "Herbinator-Setup") and this page loads
+       automatically via captive portal detection.
+
+       PURPOSE: Collect the user's home WiFi credentials so
+       the ESP32 can connect to their network and serve the
+       main dashboard.
+
+       BACKEND INTEGRATION NOTES:
+       - The form POSTs to /api/wifi/connect
+       - The network list will be populated by a GET to
+         /api/wifi/scan
+       - After successful connection, redirect to the
+         dashboard at the ESP32's new IP address
+       ===================================================== -->
+
+  <header class="app-header">
+    <h1>HERBINATOR</h1>
+    <p class="subtitle">WiFi Setup</p>
+  </header>
+
+  <main class="container">
+
+    <!-- Step indicator - shows user where they are in setup -->
+    <div class="text-center mt-md mb-md">
+      <p class="text-muted" style="font-size: 0.85rem;">
+        Connect your Herbinator Hub to your WiFi network
+      </p>
+    </div>
+
+    <!-- ======================
+         NETWORK SCAN SECTION
+
+         In the real app, JS will call /api/wifi/scan and
+         populate this list dynamically. For now, we show
+         mock data to prototype the UI.
+         ====================== -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Available Networks</h2>
+        <!-- This button triggers a rescan.
+             data-action attributes are hooks for your future JS
+             to attach event listeners without hardcoding IDs. -->
+        <button class="btn btn-sm btn-outline" data-action="scan-wifi">
+          Rescan
+        </button>
+      </div>
+
+      <!-- Each .network-item represents a discovered WiFi network.
+           Clicking one should auto-fill the SSID field below.
+
+           The data-ssid attribute stores the network name so JS
+           can read it without parsing the text content. This is a
+           common pattern: use data-* attributes to store machine-
+           readable values separate from display text. -->
+      <ul class="network-list" id="network-list">
+        <li class="network-item" data-ssid="HomeNetwork_5G">
+          <span class="ssid">HomeNetwork_5G</span>
+          <span class="signal">-42 dBm</span>
+        </li>
+        <li class="network-item" data-ssid="HomeNetwork_2.4G">
+          <span class="ssid">HomeNetwork_2.4G</span>
+          <span class="signal">-55 dBm</span>
+        </li>
+        <li class="network-item" data-ssid="Neighbor_WiFi">
+          <span class="ssid">Neighbor_WiFi</span>
+          <span class="signal">-71 dBm</span>
+        </li>
+        <li class="network-item" data-ssid="IOT_Network">
+          <span class="ssid">IOT_Network</span>
+          <span class="signal">-68 dBm</span>
+        </li>
+      </ul>
+
+      <p class="help-text mt-sm">
+        Tap a network to select it, or enter details manually below.
+      </p>
+    </div>
+
+    <!-- ======================
+         WIFI CREDENTIALS FORM
+
+         action="/api/wifi/connect" - this is the endpoint your
+         ESP32 backend will handle. The ESP32 web server (using
+         ESPAsyncWebServer or similar) will parse the POST data,
+         attempt to connect to the specified network, and respond
+         with success/failure.
+
+         method="POST" - POST is correct here because we're
+         sending sensitive data (password) and causing a state
+         change on the server.
+         ====================== -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Network Credentials</h2>
+      </div>
+
+      <form action="/api/wifi/connect" method="POST" id="wifi-form">
+        <div class="form-group">
+          <label for="ssid">Network Name (SSID)</label>
+          <!-- The id matches the label's "for" attribute, which
+               makes clicking the label focus the input (accessibility) -->
+          <input
+            type="text"
+            id="ssid"
+            name="ssid"
+            placeholder="Select above or type manually"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter WiFi password"
+          >
+          <p class="help-text">Leave blank for open networks.</p>
+        </div>
+
+        <!-- Hidden field for security type - populated by JS
+             when a network is selected from the scan list.
+             The ESP32 can use this to set the correct WiFi mode. -->
+        <input type="hidden" name="security" id="security" value="WPA2">
+
+        <button type="submit" class="btn btn-primary btn-block mt-md">
+          Connect
+        </button>
+      </form>
+    </div>
+
+    <!-- ======================
+         CONNECTION STATUS
+
+         This section is hidden by default and shown after the
+         form is submitted. It provides feedback while the ESP32
+         attempts to connect to the WiFi network.
+
+         In production, you'd poll /api/wifi/status every few
+         seconds to check if connection succeeded.
+
+         The style="display:none" hides it initially.
+         JS would remove this to show it after form submission.
+         ====================== -->
+    <div class="card" id="connection-status" style="display: none;">
+      <div class="text-center">
+        <p class="scanning" id="status-text">Connecting to network...</p>
+        <p class="help-text mt-sm" id="status-detail">
+          This may take up to 30 seconds. Do not close this page.
+        </p>
+      </div>
+    </div>
+
+    <!-- ======================
+         MANUAL IP CONFIGURATION
+
+         Advanced section for users who need a static IP.
+         This is collapsed by default. A simple detail/summary
+         HTML element gives us expand/collapse for free — no JS!
+         ====================== -->
+    <details class="card">
+      <!-- <summary> is the clickable header that toggles open/close.
+           This is native HTML — no JavaScript required! -->
+      <summary style="cursor: pointer; color: var(--color-text-muted); font-size: 0.85rem;">
+        Advanced: Static IP Configuration
+      </summary>
+
+      <div class="mt-md">
+        <div class="form-group">
+          <label for="static-ip">Static IP Address</label>
+          <input type="text" id="static-ip" name="static_ip" placeholder="192.168.1.100">
+        </div>
+        <div class="form-group">
+          <label for="gateway">Gateway</label>
+          <input type="text" id="gateway" name="gateway" placeholder="192.168.1.1">
+        </div>
+        <div class="form-group">
+          <label for="subnet">Subnet Mask</label>
+          <input type="text" id="subnet" name="subnet" placeholder="255.255.255.0">
+        </div>
+      </div>
+    </details>
+
+    <!-- Footer with device info -->
+    <div class="text-center mt-lg" style="padding-bottom: var(--spacing-lg);">
+      <p class="text-muted" style="font-size: 0.75rem;">
+        Herbinator Hub v0.1 | MAC: <span id="mac-address">AA:BB:CC:DD:EE:FF</span>
+      </p>
+      <p class="text-muted" style="font-size: 0.75rem;">
+        <!-- data-firmware-version is a hook for the backend to
+             inject the actual firmware version at serve time -->
+        Firmware: <span data-firmware-version>0.1.0-prototype</span>
+      </p>
+    </div>
+
+  </main>
+
+</body>
+</html>
