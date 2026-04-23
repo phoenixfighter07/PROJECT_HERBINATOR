@@ -524,6 +524,7 @@ void loop() {
       bool waterPresent = rawWaterPresent >= WATER_THRESHOLD;
 
       readDHT(); // Read temp to find failure
+      Serial.print("rawMoist=");   Serial.println(rawMoist);
       Serial.print(" moist%=");    Serial.println(moistPct, 2);
 
       bool pumpTooLong = (now - pumpStartMs) > MAX_PUMP_ON_MS;
@@ -604,11 +605,11 @@ void loop() {
 
       if (!canReadSensors()) break;
 
-      int rawMoisture;
-      readMoistureSensor(&rawMoisture); // Attempt to read
+      int rawMoist; 
+      float moistPct = readMoistureSensor(&rawMoist);
 
-      Serial.print("rawMoist=");
-      Serial.println(rawMoisture);
+      Serial.print("rawMoist=");   Serial.println(rawMoist);
+      Serial.print(" moist%=");    Serial.println(moistPct, 2);
 
       if (moistureSensorFail) break; // Still not reading properly
 
