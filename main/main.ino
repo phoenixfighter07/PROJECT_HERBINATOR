@@ -80,7 +80,7 @@ const float ON_THRESHOLD_BASE  = 0.25;  // water when moisture drops below this
 const float OFF_THRESHOLD_BASE = 0.75;  // stop when moisture rises above this, too wet!
 const int WATER_THRESHOLD = 500; // Threshold for when we detect current going thru the water to verify that the water is in the container.
 const float MOIST_FAIL_GRACE = 0.20f; // The percent +/- added to the threshold clamp to ensure proper operation of the moisture sensor
-const int MIN_RAW_MOIST = 15; // Minimum moisture necessary to ensure proper sensor operation
+const int MIN_RAW_MOIST = 110; // Minimum moisture necessary to ensure proper sensor operation
 
 // -------------------- Vapor Pressure Deficit (VPD) Adjustment --------------------
 // VPD (kPa) measures evaporative demand. Higher VPD = plant transpires faster.
@@ -93,7 +93,7 @@ const float VPD_ADJUST_MAX = 0.1f; // max ± adjustment applied to ON_THRESHOLD_
 
 // Pump timing safety
 const char PUMP_ON_DEGREE = 0; // Value from 0 to 80 describing the speed of the pump. 0 fastest 80 slowest.
-const unsigned long MAX_PUMP_ON_MS = 120UL * 1000UL; // 120 seconds max per cycle
+const unsigned long MAX_PUMP_ON_MS = 45UL * 1000UL; // 45 seconds max per cycle, let users set this!
 
 // -------------------- State --------------------
 bool pumpOn = false;
@@ -207,6 +207,9 @@ void setup() {
 
   delay(1000);
 
+  // CSV header — matches printCSVRow() column order
+  Serial.println("timestamp_ms,state,rawMoist,moist_pct,on_thresh,temp_c,humidity_pct,vpd_kpa,dht_ok,pump_on,water_raw,water_present");
+
   // Load initial values
 
   EEPROM.get(SENSOR_WET_ADDRESS, moistureWet);
@@ -297,6 +300,22 @@ float readMoistureSensor(int *rawMoist) {
   moistureSensorFail = validCalibration && (pct < 0 - MOIST_FAIL_GRACE || pct > 1 + MOIST_FAIL_GRACE) || *rawMoist < MIN_RAW_MOIST;
 
   return pct;
+}
+
+void printCSVRow(const char* state, int rawMoist, float moistPct, float onThresh,
+                 bool dhtOK, int rawWater, bool waterPresent) {
+  Serial.print(millis());        Serial.print(',');
+  Serial.print(state);           Serial.print(',');
+  Serial.print(rawMoist);        Serial.print(',');
+  Serial.print(moistPct, 2);     Serial.print(',');
+  Serial.print(onThresh, 2);     Serial.print(',');
+  Serial.print(lastTempC, 1);    Serial.print(',');
+  Serial.print(lastHumidity, 1); Serial.print(',');
+  Serial.print(computeVPD(lastTempC, lastHumidity), 3); Serial.print(',');
+  Serial.print(dhtOK ? 1 : 0);  Serial.print(',');
+  Serial.print(pumpOn ? 1 : 0);  Serial.print(',');
+  Serial.print(rawWater);        Serial.print(',');
+  Serial.println(waterPresent ? 1 : 0);
 }
 
 void loop() {
@@ -473,14 +492,8 @@ void loop() {
       int rawWaterPresent = analogRead(WATER_READ);
       bool waterPresent = rawWaterPresent >= WATER_THRESHOLD;
 
-      // Debug output
-      Serial.print("rawMoist=");   Serial.print(rawMoist);
-      Serial.print(" moist%=");    Serial.print(moistPct, 2);
-      Serial.print(" onThresh=");  Serial.print(onThreshold, 2);
-      Serial.print(" tempC=");     Serial.print(lastTempC, 1);
-      Serial.print(" hum%=");      Serial.print(lastHumidity, 1);
-      Serial.print(" vpd=");       Serial.print(computeVPD(lastTempC, lastHumidity), 3);
-      Serial.print(" dhtOK=");     Serial.println(readSuccess ? "YES" : "NO");
+      printCSVRow("WaterLoop", rawMoist, moistPct, onThreshold,
+                  readSuccess, rawWaterPresent, waterPresent);
 
       // ── No water → Error ──
       if (!waterPresent) {
@@ -523,9 +536,10 @@ void loop() {
       int rawWaterPresent = analogRead(WATER_READ);
       bool waterPresent = rawWaterPresent >= WATER_THRESHOLD;
 
-      readDHT(); // Read temp to find failure
-      Serial.print("rawMoist=");   Serial.println(rawMoist);
-      Serial.print(" moist%=");    Serial.println(moistPct, 2);
+      bool dhtOK = readDHT();
+      printCSVRow("PumpOn", rawMoist, moistPct,
+                  getAdjustedOnThreshold(lastTempC, lastHumidity),
+                  dhtOK, rawWaterPresent, waterPresent);
 
       bool pumpTooLong = (now - pumpStartMs) > MAX_PUMP_ON_MS;
 
@@ -608,8 +622,9 @@ void loop() {
       int rawMoist; 
       float moistPct = readMoistureSensor(&rawMoist);
 
-      Serial.print("rawMoist=");   Serial.println(rawMoist);
-      Serial.print(" moist%=");    Serial.println(moistPct, 2);
+      printCSVRow("MoistureFail", rawMoist, moistPct,
+                  getAdjustedOnThreshold(lastTempC, lastHumidity),
+                  false, -1, false);
 
       if (moistureSensorFail) break; // Still not reading properly
 

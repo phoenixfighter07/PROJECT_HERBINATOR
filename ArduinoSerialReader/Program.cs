@@ -23,9 +23,10 @@ namespace ArduinoConsole
             Console.WriteLine("Press any key to stop...");
             Console.WriteLine();
             Console.ReadKey();
-            sp.Close();
             Console.WriteLine("\nPort terminated!");
             File.AppendAllLines(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "//LogFile.csv", data);
+
+            sp.Close();
         }
         /*
             ShowArduinoMsg
