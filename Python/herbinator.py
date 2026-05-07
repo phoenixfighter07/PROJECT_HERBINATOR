@@ -46,7 +46,19 @@ def unpause_herbinator():
 def get_temperature():
     state = get_herbinator_state()
     if state:
-        return state.get("temperature")
+        return state.get("Temperature")
 
 def get_herbinator_state():
-    return send_command("state")
+    return send_command("State")
+
+def get_data_time():
+    return send_command("Time")
+
+def get_humidity():
+    return send_command("Humidity")
+
+def get_moisture():
+    return send_command("Moisture")
+
+def get_name():
+    return send_command("Name")
