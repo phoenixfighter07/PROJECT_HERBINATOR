@@ -1,8 +1,3 @@
-#include <HTTP_Method.h>
-#include <Middlewares.h>
-#include <Uri.h>
-#include <WebServer.h>
-
 /**
  * ESPMain.ino
  * Brain for ESP Herbinator units. Uses a FSM to read sensor data
@@ -11,6 +6,10 @@
  * Author: Landon Wardle
  */
 
+#include <HTTP_Method.h>
+#include <Middlewares.h>
+#include <Uri.h>
+#include <WebServer.h>
 #include <DHT11.h>
 #include <ESP32Servo.h>
 #include <ESP32PWM.h>
@@ -26,8 +25,10 @@
  * Unit name
 */
 
-// Enum declarations must come before any function definitions so that the
-// Arduino IDE's auto-generated forward declarations can reference these types.
+/**
+ * Enum declarations must come before any function definitions so that the
+ * Arduino IDE's auto-generated forward declarations can reference these types.
+*/
 enum class State {
   MainLoop,
   RedFlash,
