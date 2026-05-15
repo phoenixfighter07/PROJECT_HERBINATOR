@@ -416,7 +416,7 @@
         "uuid": "65cebcdd-0dc1-4eaa-a413-d7a78528268c"
       }
     ],
-    "used_designators": "",
+    "used_designators": "R9-11,#PWR20-23,D2-4,SW3",
     "variants": []
   },
   "sheets": [
@@ -431,6 +431,10 @@
     [
       "9537999c-2d2d-4c3b-bb2b-cbc8278ca9a4",
       "ESP32-S3"
+    ],
+    [
+      "29257fe1-69a7-4951-8718-03b801486004",
+      "Peripherals"
     ]
   ],
   "text_variables": {},
