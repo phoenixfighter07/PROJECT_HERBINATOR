@@ -5,6 +5,200 @@
 	(uuid "7ee28b9c-29c8-4813-9f10-a9f6710a33cd")
 	(paper "A4")
 	(lib_symbols
+		(symbol "AP2112K-3.3_1"
+			(pin_names
+				(offset 0.254)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "U"
+				(at -5.08 5.715 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "AP2112K-3.3"
+				(at 0 5.715 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" "Package_TO_SOT_SMD:SOT-23-5"
+				(at 0 8.255 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" "https://www.diodes.com/assets/Datasheets/AP2112.pdf"
+				(at 0 2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "600mA low dropout linear regulator, with enable pin, 3.8V-6V input voltage range, 3.3V fixed positive output, SOT-23-5"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "linear regulator ldo fixed positive"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "SOT?23?5*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "AP2112K-3.3_1_0_1"
+				(rectangle
+					(start -5.08 4.445)
+					(end 5.08 -5.08)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+			)
+			(symbol "AP2112K-3.3_1_1_1"
+				(pin power_in line
+					(at -7.62 2.54 0)
+					(length 2.54)
+					(name "VIN"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 0 -7.62 90)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -7.62 0 0)
+					(length 2.54)
+					(name "EN"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin no_connect line
+					(at 5.08 0 180)
+					(length 2.54)
+					(hide yes)
+					(name "NC"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_out line
+					(at 7.62 2.54 180)
+					(length 2.54)
+					(name "VOUT"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Connector:Barrel_Jack_Switch_Pin3Ring"
 			(pin_names
 				(hide yes)
@@ -1094,6 +1288,207 @@
 					(at 0 -3.81 90)
 					(length 2.794)
 					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Device:LED"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "D"
+				(at 0 2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "LED"
+				(at 0 -2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Light emitting diode"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Sim.Pins" "1=K 2=A"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "LED diode"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "LED* LED_SMD:* LED_THT:*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "LED_0_1"
+				(polyline
+					(pts
+						(xy -3.048 -0.762) (xy -4.572 -2.286) (xy -3.81 -2.286) (xy -4.572 -2.286) (xy -4.572 -1.524)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.778 -0.762) (xy -3.302 -2.286) (xy -2.54 -2.286) (xy -3.302 -2.286) (xy -3.302 -1.524)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 0) (xy 1.27 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 -1.27) (xy -1.27 1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 -1.27) (xy 1.27 1.27) (xy -1.27 0) (xy 1.27 -1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "LED_1_1"
+				(pin passive line
+					(at -3.81 0 0)
+					(length 2.54)
+					(name "K"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 3.81 0 180)
+					(length 2.54)
+					(name "A"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -2943,200 +3338,6 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "Regulator_Linear:AP2112K-3.3"
-			(pin_names
-				(offset 0.254)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(in_pos_files yes)
-			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "U"
-				(at -5.08 5.715 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left)
-				)
-			)
-			(property "Value" "AP2112K-3.3"
-				(at 0 5.715 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left)
-				)
-			)
-			(property "Footprint" "Package_TO_SOT_SMD:SOT-23-5"
-				(at 0 8.255 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Datasheet" "https://www.diodes.com/assets/Datasheets/AP2112.pdf"
-				(at 0 2.54 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Description" "600mA low dropout linear regulator, with enable pin, 3.8V-6V input voltage range, 3.3V fixed positive output, SOT-23-5"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_keywords" "linear regulator ldo fixed positive"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_fp_filters" "SOT?23?5*"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(symbol "AP2112K-3.3_0_1"
-				(rectangle
-					(start -5.08 4.445)
-					(end 5.08 -5.08)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type background)
-					)
-				)
-			)
-			(symbol "AP2112K-3.3_1_1"
-				(pin power_in line
-					(at -7.62 2.54 0)
-					(length 2.54)
-					(name "VIN"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_in line
-					(at 0 -7.62 90)
-					(length 2.54)
-					(name "GND"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at -7.62 0 0)
-					(length 2.54)
-					(name "EN"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin no_connect line
-					(at 5.08 0 180)
-					(length 2.54)
-					(hide yes)
-					(name "NC"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "4"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_out line
-					(at 7.62 2.54 180)
-					(length 2.54)
-					(name "VOUT"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "5"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "Switch:SW_Push"
 			(pin_numbers
 				(hide yes)
@@ -3848,7 +4049,7 @@
 	)
 	(rectangle
 		(start 129.54 113.03)
-		(end 187.96 156.21)
+		(end 193.04 156.21)
 		(stroke
 			(width 0)
 			(type default)
@@ -3860,7 +4061,7 @@
 	)
 	(rectangle
 		(start 113.03 13.97)
-		(end 187.96 111.76)
+		(end 193.04 111.76)
 		(stroke
 			(width 0)
 			(type default)
@@ -3880,9 +4081,9 @@
 		)
 		(uuid "4ac5eb82-f6ed-48f7-8311-9be594db1591")
 	)
-	(text "5 LDO & Jack"
+	(text "5v LDO & Jack"
 		(exclude_from_sim no)
-		(at 156.972 117.094 0)
+		(at 158.75 117.094 0)
 		(effects
 			(font
 				(size 5.08 5.08)
@@ -3890,9 +4091,9 @@
 		)
 		(uuid "59ef6b05-6384-4cd8-ac02-2f67fbf888e1")
 	)
-	(text "3.3 LDO\n"
+	(text "3.3v LDO\n"
 		(exclude_from_sim no)
-		(at 98.552 117.856 0)
+		(at 98.552 117.348 0)
 		(effects
 			(font
 				(size 5.08 5.08)
@@ -3902,7 +4103,7 @@
 	)
 	(text "Boot & Reset"
 		(exclude_from_sim no)
-		(at 41.656 117.094 0)
+		(at 40.132 117.348 0)
 		(effects
 			(font
 				(size 5.08 5.08)
@@ -3939,6 +4140,12 @@
 		(uuid "10088646-8a01-43af-96c7-5c51ba1691f4")
 	)
 	(junction
+		(at 92.71 35.56)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "17efd490-8c76-4e62-8f24-bb5b51637569")
+	)
+	(junction
 		(at 87.63 132.08)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3951,22 +4158,16 @@
 		(uuid "2d6e42b6-5785-45c8-9cfa-663c95eb59e8")
 	)
 	(junction
-		(at 160.02 130.81)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "3b014cb0-de1d-4895-b7f6-8c0481ab4767")
-	)
-	(junction
 		(at 162.56 138.43)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "3d5064ad-1895-4c4e-81ea-4e95a5b7ed19")
 	)
 	(junction
-		(at 96.52 132.08)
+		(at 180.34 130.81)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "4c856c5b-6cb4-46a2-b950-32b0ff15a9d1")
+		(uuid "46e48d46-54fe-4856-8cbe-019661bf75f0")
 	)
 	(junction
 		(at 45.72 62.23)
@@ -3987,12 +4188,6 @@
 		(uuid "69602298-7dd8-4339-9595-1ed718a66099")
 	)
 	(junction
-		(at 52.07 35.56)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "78afec74-ce99-4191-8536-93376d1541f3")
-	)
-	(junction
 		(at 146.05 33.02)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -4011,6 +4206,18 @@
 		(uuid "92926b6c-6f04-4b2e-be41-d2e4d1e45cd9")
 	)
 	(junction
+		(at 172.72 138.43)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "99a4177b-774d-4870-9ce0-190bb5a2642b")
+	)
+	(junction
+		(at 163.83 130.81)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "9ca05937-9611-422a-8c22-e98804ea5f2f")
+	)
+	(junction
 		(at 45.72 59.69)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -4021,6 +4228,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "aaf4c9c6-ce7e-4cc1-aee4-b9fc54d0b8dc")
+	)
+	(junction
+		(at 96.52 132.08)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "ac31fdce-b944-4849-941c-3c70ee0fde09")
 	)
 	(junction
 		(at 30.48 82.55)
@@ -4045,6 +4258,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "d82c58e2-252a-4169-8f5c-8dc0eb243203")
+	)
+	(junction
+		(at 97.79 45.72)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "e1cd4bea-a349-42c4-b13b-1f160688afbf")
 	)
 	(junction
 		(at 30.48 91.44)
@@ -4168,16 +4387,6 @@
 	)
 	(wire
 		(pts
-			(xy 160.02 130.81) (xy 162.56 130.81)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "02602451-87b9-4193-b106-bce2f13a338b")
-	)
-	(wire
-		(pts
 			(xy 71.12 59.69) (xy 73.66 59.69)
 		)
 		(stroke
@@ -4195,6 +4404,16 @@
 			(type default)
 		)
 		(uuid "0a3158b6-416d-4ccd-9470-cca9d85f8d99")
+	)
+	(wire
+		(pts
+			(xy 172.72 138.43) (xy 172.72 146.05)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0abec6db-1878-4e65-952f-e02b1d21796b")
 	)
 	(wire
 		(pts
@@ -4228,7 +4447,7 @@
 	)
 	(wire
 		(pts
-			(xy 80.01 35.56) (xy 86.36 35.56)
+			(xy 80.01 35.56) (xy 82.55 35.56)
 		)
 		(stroke
 			(width 0)
@@ -4308,16 +4527,6 @@
 	)
 	(wire
 		(pts
-			(xy 93.98 35.56) (xy 100.33 35.56)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "2369d7d9-09d3-4787-af10-95298536766d")
-	)
-	(wire
-		(pts
 			(xy 30.48 160.02) (xy 36.83 160.02)
 		)
 		(stroke
@@ -4325,6 +4534,16 @@
 			(type default)
 		)
 		(uuid "24108509-1a44-4220-a43d-020777da2518")
+	)
+	(wire
+		(pts
+			(xy 92.71 35.56) (xy 100.33 35.56)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2a1ce470-0cfa-4607-9003-c8895383b23b")
 	)
 	(wire
 		(pts
@@ -4338,7 +4557,7 @@
 	)
 	(wire
 		(pts
-			(xy 151.13 130.81) (xy 160.02 130.81)
+			(xy 151.13 130.81) (xy 162.56 130.81)
 		)
 		(stroke
 			(width 0)
@@ -4428,6 +4647,16 @@
 	)
 	(wire
 		(pts
+			(xy 97.79 45.72) (xy 90.17 45.72)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6e286a37-79c9-437a-9eda-51b4cc533313")
+	)
+	(wire
+		(pts
 			(xy 80.01 43.18) (xy 80.01 45.72)
 		)
 		(stroke
@@ -4455,6 +4684,16 @@
 			(type default)
 		)
 		(uuid "78e211ff-ec41-4b6a-9554-ed8a704192db")
+	)
+	(wire
+		(pts
+			(xy 90.17 35.56) (xy 92.71 35.56)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "82d55436-e49e-43f5-a7c1-6a599af03aca")
 	)
 	(wire
 		(pts
@@ -4538,6 +4777,16 @@
 	)
 	(wire
 		(pts
+			(xy 163.83 130.81) (xy 165.1 130.81)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9ca99416-2091-4555-be26-992b6ec1fb99")
+	)
+	(wire
+		(pts
 			(xy 59.69 35.56) (xy 52.07 35.56)
 		)
 		(stroke
@@ -4555,6 +4804,16 @@
 			(type default)
 		)
 		(uuid "aa6c4b02-7be7-4649-8150-e6ab00556a70")
+	)
+	(wire
+		(pts
+			(xy 172.72 146.05) (xy 180.34 146.05)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "aacdca66-605e-43b1-ba37-857e4c0c5ae9")
 	)
 	(wire
 		(pts
@@ -4648,7 +4907,7 @@
 	)
 	(wire
 		(pts
-			(xy 162.56 130.81) (xy 165.1 130.81)
+			(xy 162.56 130.81) (xy 163.83 130.81)
 		)
 		(stroke
 			(width 0)
@@ -4728,7 +4987,7 @@
 	)
 	(wire
 		(pts
-			(xy 100.33 45.72) (xy 90.17 45.72)
+			(xy 100.33 45.72) (xy 97.79 45.72)
 		)
 		(stroke
 			(width 0)
@@ -6195,6 +6454,84 @@
 		)
 	)
 	(symbol
+		(lib_id "power:PWR_FLAG")
+		(at 92.71 35.56 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "2809624b-3fe2-4d52-b8f2-f0f6fbeb7f11")
+		(property "Reference" "#FLG01"
+			(at 92.71 33.655 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "PWR_FLAG"
+			(at 92.71 30.48 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 92.71 35.56 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 92.71 35.56 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Special symbol for telling ERC where power comes from"
+			(at 92.71 35.56 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "6a0aa81c-00e1-4458-a4b3-eb9d176eea99")
+		)
+		(instances
+			(project "HerbUnitPCB"
+				(path "/65cebcdd-0dc1-4eaa-a413-d7a78528268c/9537999c-2d2d-4c3b-bb2b-cbc8278ca9a4"
+					(reference "#FLG01")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Switch:SW_Push")
 		(at 25.4 160.02 0)
 		(unit 1)
@@ -7065,6 +7402,84 @@
 		)
 	)
 	(symbol
+		(lib_id "power:PWR_FLAG")
+		(at 97.79 45.72 180)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "761f9ad5-0415-424d-8016-e37b2b9f9655")
+		(property "Reference" "#FLG03"
+			(at 97.79 47.625 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "PWR_FLAG"
+			(at 97.79 50.8 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 97.79 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 97.79 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Special symbol for telling ERC where power comes from"
+			(at 97.79 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "f717bef0-42cd-403b-8a85-7fd0d5316e14")
+		)
+		(instances
+			(project "HerbUnitPCB"
+				(path "/65cebcdd-0dc1-4eaa-a413-d7a78528268c/9537999c-2d2d-4c3b-bb2b-cbc8278ca9a4"
+					(reference "#FLG03")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:+3.3V")
 		(at 36.83 151.13 0)
 		(unit 1)
@@ -7624,7 +8039,7 @@
 	)
 	(symbol
 		(lib_id "power:PWR_FLAG")
-		(at 160.02 130.81 0)
+		(at 163.83 130.81 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -7632,10 +8047,9 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "8a725142-e8b4-4909-b687-c17619e5ba59")
 		(property "Reference" "#FLG02"
-			(at 160.02 128.905 0)
+			(at 163.83 128.905 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7646,17 +8060,18 @@
 			)
 		)
 		(property "Value" "PWR_FLAG"
-			(at 160.02 125.73 0)
+			(at 167.64 127 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify right)
 			)
 		)
 		(property "Footprint" ""
-			(at 160.02 130.81 0)
+			(at 163.83 130.81 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7667,7 +8082,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 160.02 130.81 0)
+			(at 163.83 130.81 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7678,7 +8093,7 @@
 			)
 		)
 		(property "Description" "Special symbol for telling ERC where power comes from"
-			(at 160.02 130.81 0)
+			(at 163.83 130.81 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7783,7 +8198,7 @@
 	)
 	(symbol
 		(lib_id "Device:R_US")
-		(at 90.17 35.56 90)
+		(at 86.36 35.56 90)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -7794,7 +8209,7 @@
 		(fields_autoplaced yes)
 		(uuid "926ac7aa-5e30-46fc-af1d-c70f3c503027")
 		(property "Reference" "R1"
-			(at 90.17 29.21 90)
+			(at 86.36 29.21 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7804,7 +8219,7 @@
 			)
 		)
 		(property "Value" "0"
-			(at 90.17 31.75 90)
+			(at 86.36 31.75 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7814,7 +8229,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 90.424 34.544 90)
+			(at 86.614 34.544 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7825,7 +8240,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 90.17 35.56 0)
+			(at 86.36 35.56 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7836,7 +8251,7 @@
 			)
 		)
 		(property "Description" "Resistor, US symbol"
-			(at 90.17 35.56 0)
+			(at 86.36 35.56 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8103,95 +8518,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Regulator_Linear:AP2112K-3.3")
-		(at 104.14 134.62 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "affc5f3b-b117-4a80-81ef-e68d62084313")
-		(property "Reference" "U4"
-			(at 104.14 125.73 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "AP2112K-3.3"
-			(at 104.14 128.27 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-5"
-			(at 104.14 126.365 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" "https://www.diodes.com/assets/Datasheets/AP2112.pdf"
-			(at 104.14 132.08 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "600mA low dropout linear regulator, with enable pin, 3.8V-6V input voltage range, 3.3V fixed positive output, SOT-23-5"
-			(at 104.14 134.62 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "196aa2d3-4074-43f0-94e3-e79b7337dd1e")
-		)
-		(pin "3"
-			(uuid "e2bf6776-760d-47e2-817f-bb88f0455826")
-		)
-		(pin "2"
-			(uuid "da8b8e4e-e3ae-476e-83c0-29b0102c547b")
-		)
-		(pin "4"
-			(uuid "99bd4e63-cdb4-4032-b0c2-4647ad72152c")
-		)
-		(pin "5"
-			(uuid "0e12c9da-eb90-4ee6-a8ed-349f47a1a30f")
-		)
-		(instances
-			(project "HerbUnitPCB"
-				(path "/65cebcdd-0dc1-4eaa-a413-d7a78528268c/9537999c-2d2d-4c3b-bb2b-cbc8278ca9a4"
-					(reference "U4")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:C")
 		(at 57.15 163.83 0)
 		(unit 1)
@@ -8432,8 +8758,8 @@
 		)
 	)
 	(symbol
-		(lib_id "power:PWR_FLAG")
-		(at 52.07 35.56 0)
+		(lib_id "Device:R_US")
+		(at 180.34 134.62 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -8442,30 +8768,31 @@
 		(in_pos_files yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "bf595da8-de72-4816-8803-332431e14e2e")
-		(property "Reference" "#FLG01"
-			(at 52.07 33.655 0)
-			(hide yes)
+		(uuid "c44955f2-153a-4772-8bd1-c0661bb3fe0f")
+		(property "Reference" "R15"
+			(at 182.88 133.3499 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
-		(property "Value" "PWR_FLAG"
-			(at 52.07 30.48 0)
+		(property "Value" "2k"
+			(at 182.88 135.8899 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
-		(property "Footprint" ""
-			(at 52.07 35.56 0)
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+			(at 181.356 134.874 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8476,7 +8803,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 52.07 35.56 0)
+			(at 180.34 134.62 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8486,8 +8813,8 @@
 				)
 			)
 		)
-		(property "Description" "Special symbol for telling ERC where power comes from"
-			(at 52.07 35.56 0)
+		(property "Description" "Resistor, US symbol"
+			(at 180.34 134.62 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8498,12 +8825,15 @@
 			)
 		)
 		(pin "1"
-			(uuid "b83352f5-0464-445a-948d-14f2dd3c707b")
+			(uuid "a457420f-3877-4e01-881e-d24a99ece9d2")
+		)
+		(pin "2"
+			(uuid "f7d04ab3-363d-4f76-8f15-c2124f56e849")
 		)
 		(instances
 			(project "HerbUnitPCB"
 				(path "/65cebcdd-0dc1-4eaa-a413-d7a78528268c/9537999c-2d2d-4c3b-bb2b-cbc8278ca9a4"
-					(reference "#FLG01")
+					(reference "R15")
 					(unit 1)
 				)
 			)
@@ -8997,6 +9327,96 @@
 		)
 	)
 	(symbol
+		(lib_name "AP2112K-3.3_1")
+		(lib_id "Regulator_Linear:AP2112K-3.3")
+		(at 104.14 134.62 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "e8db0ea4-7ee1-46d6-a8a5-bc6b0220238e")
+		(property "Reference" "U6"
+			(at 104.14 125.73 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "AP2112K-3.3"
+			(at 104.14 128.27 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-5"
+			(at 104.14 126.365 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.diodes.com/assets/Datasheets/AP2112.pdf"
+			(at 104.14 132.08 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "600mA low dropout linear regulator, with enable pin, 3.8V-6V input voltage range, 3.3V fixed positive output, SOT-23-5"
+			(at 104.14 134.62 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "5"
+			(uuid "1baeb9a0-c431-4169-8fc8-4c9957157769")
+		)
+		(pin "3"
+			(uuid "b8847942-6a51-4150-b7c3-6feb0ce74fe8")
+		)
+		(pin "1"
+			(uuid "8988534b-0d50-4be1-98ce-e7762fe99041")
+		)
+		(pin "2"
+			(uuid "3cedb40f-992e-41a9-94c6-3cb85539cff2")
+		)
+		(pin "4"
+			(uuid "8e007c0f-3b58-4c10-af41-a56b4554d625")
+		)
+		(instances
+			(project "HerbUnitPCB"
+				(path "/65cebcdd-0dc1-4eaa-a413-d7a78528268c/9537999c-2d2d-4c3b-bb2b-cbc8278ca9a4"
+					(reference "U6")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:+5V")
 		(at 184.15 130.81 0)
 		(unit 1)
@@ -9224,6 +9644,98 @@
 			(project "HerbUnitPCB"
 				(path "/65cebcdd-0dc1-4eaa-a413-d7a78528268c/9537999c-2d2d-4c3b-bb2b-cbc8278ca9a4"
 					(reference "#PWR011")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:LED")
+		(at 180.34 142.24 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "f827d0ed-17c2-460f-a63c-91cde82a37be")
+		(property "Reference" "D5"
+			(at 182.372 140.97 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "Green LED"
+			(at 182.372 143.51 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "LED_SMD:LED_0201_0603Metric"
+			(at 180.34 142.24 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 180.34 142.24 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Light emitting diode"
+			(at 180.34 142.24 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Sim.Pins" "1=K 2=A"
+			(at 180.34 142.24 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "42319f9c-b3a0-4839-9bc0-8415cd06a2ce")
+		)
+		(pin "1"
+			(uuid "38f4c5c0-3584-4ca6-9013-ee958a1968be")
+		)
+		(instances
+			(project "HerbUnitPCB"
+				(path "/65cebcdd-0dc1-4eaa-a413-d7a78528268c/9537999c-2d2d-4c3b-bb2b-cbc8278ca9a4"
+					(reference "D5")
 					(unit 1)
 				)
 			)

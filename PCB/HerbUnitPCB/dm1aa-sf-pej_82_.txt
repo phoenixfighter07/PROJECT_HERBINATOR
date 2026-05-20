@@ -1,0 +1,15 @@
+﻿"Symbol";"Value";"Unit";
+"REFERENCE";"DM1AA-SF-PEJ(82)";"";
+"TraceParts.PartVersion";"1.1.0";"";
+"SUPPLIER";"HIROSE";"";
+"cl_code";"CL0609-0004-8-82";"";
+"TraceParts.PartNumber";"90-21102022-063089";"";
+"discontinued";"0";"";
+"hrs_no";"6090004882";"";
+"series_name";"DM1";"";
+"TraceParts.PartLanguage";"en";"";
+"DESIGN";"SD Memory Card Connectors  - DM1 Series -DM1AA-SF-PEJ(82)-CL0609-0004-8-82";"";
+"TraceParts.InstanceId";"90-21102022-063089OU7AK6CQSJ0RVYTMWTI79959";"";
+"TraceParts.PartTitle";"SD Memory Card Connectors  - DM1 Series";"";
+"TRACEPARTS";"TRACEPARTS";"";
+"mass";"2.2000000000000002";"";

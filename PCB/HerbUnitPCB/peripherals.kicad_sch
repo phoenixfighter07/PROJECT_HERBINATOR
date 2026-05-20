@@ -2771,7 +2771,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Connector_Card:SD_Card_Device_16mm_SlotDepth"
+		(property "Footprint" "Connector_Card:SD_Hirose_DM1AA_SF_PEJ82"
 			(at 149.86 83.82 0)
 			(hide yes)
 			(show_name no)
@@ -3194,7 +3194,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "LED_SMD:LED_0201_0603Metric"
 			(at 49.53 46.99 0)
 			(hide yes)
 			(show_name no)
@@ -3687,7 +3687,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "LED_SMD:LED_0201_0603Metric"
 			(at 49.53 33.02 0)
 			(hide yes)
 			(show_name no)
@@ -4337,7 +4337,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "LED_SMD:LED_0201_0603Metric"
 			(at 49.53 59.69 0)
 			(hide yes)
 			(show_name no)
