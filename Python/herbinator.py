@@ -5,28 +5,25 @@
 # Querying the esp for sensor state data periodically, and also manual functions
 # Send updates to override existing behavior 
 import requests
-import asyncio
 import time
-import threading
 import tkinter as tk
 from tkinter import ttk, messagebox
 import enum
 
 # herby should host an http server that has JSON data dynamically updated to be sent over the network to the client
 BASE_URL = "http://herbnet.local"  # DNS address
-POLL_INTERVAL = 10
+POLL_INTERVAL = 3
 
-
-
-
+# The pause function is currently not implemented in the fsm logic, so pause never actually pauses anything (yet).
+# same with manual watering functionality.
 def send_command(endpoint, method="GET", data=None):
     url = f"{BASE_URL}/{endpoint}"
 
     try:
         if method == "GET":
-            response = requests.get(url, timeout=1)
+            response = requests.get(url, timeout=3)
         elif method == "POST":
-            response = requests.post(url, json=data, timeout=1)
+            response = requests.post(url, json=data, timeout=3)
         else:
             raise ValueError("Unsupported HTTP method")
 
@@ -37,8 +34,7 @@ def send_command(endpoint, method="GET", data=None):
             return response.text
 
     except requests.exceptions.RequestException as e:
-        print(f"Error communicating with Herbinator: {e}")
-        return None
+        return {"error": str(e)}
 
 
 # display water level and manually water, water level reads as a percentage of total capacity :)
@@ -58,19 +54,19 @@ def unpause_herbinator():
 # read the temperature off the sensor, give a recommendation based off the temperature
 # if state is off, or no connection, then commands should not process.
 def get_temperature():
-    return send_command("Temperature")
+    return send_command("temperature")
 
 def get_herbinator_state():
-    return send_command("State")
+    return send_command("state")
 
 def get_data_time():
-    return send_command("Time")
+    return send_command("time")
 
 def get_humidity():
-    return send_command("Humidity")
+    return send_command("humidity")
 
 def get_moisture():
-    return send_command("Moisture")
+    return send_command("moisture")
 
 class Herbinator:
 
@@ -85,26 +81,41 @@ class Herbinator:
         self.state_var = tk.StringVar()
         self.time_var = tk.StringVar()
 
-        # Example label
+        # state and data labels
         tk.Label(root, text="Temperature:").pack()
         tk.Label(root, textvariable=self.temperature_var).pack()
 
+        tk.Label(root, text="Humidity:").pack()
+        tk.Label(root, textvariable=self.humidity_var).pack()
+
+        tk.Label(root, text="Moisture:").pack()
+        tk.Label(root, textvariable=self.moisture_var).pack()
+
+        tk.Label(root, text="State:").pack()
+        tk.Label(root, textvariable=self.state_var).pack()
+
+        tk.Label(root, text="Last Update:").pack()
+        tk.Label(root, textvariable=self.time_var).pack()
         # Log box
         self.log_box = tk.Text(root, height=10, width=50)
         self.log_box.pack()
 
-        # Buttons
+        # BUTTTONZ :>
         tk.Button(root, text="Water Plant",
                   command=self.water_plant).pack()
-
+        tk.Button(root, text="Pause",
+                  command=self.pause_system).pack()
+        tk.Button(root, text="Pause 1 Minute",
+                command=self.pause_one_minute).pack()
         tk.Button(root, text="Resume",
                   command=self.resume_system).pack()
-
+        
         # Start polling thread
-        threading.Thread(
-            target=self.start_polling_loop,
-            daemon=True
-        ).start()
+        self.schedule_refresh()
+
+    def schedule_refresh(self):
+        self.refresh_data()
+        self.root.after(POLL_INTERVAL * 1000, self.schedule_refresh)
 
     def log(self, message):
         timestamp = time.strftime("%H:%M:%S")
@@ -122,7 +133,19 @@ class Herbinator:
         response = unpause_herbinator()
         self.log(f"Resume command sent: {response}")
 
+    def pause_system(self):
+        response = pause_herbinator()
+        self.log(f"Pause command sent: {response}")
+
+    def pause_one_minute(self):
+        response = pause_herbinator(60)
+        self.log(f"Paused for 60s: {response}")
+
     def refresh_data(self):
+        temp = get_temperature()
+        if isinstance(temp, dict) and "error" in temp:
+            self.log(temp["error"])
+
         self.log("Refreshing sensor data...")
 
         self.temperature_var.set(
@@ -142,14 +165,6 @@ class Herbinator:
         )
 
         self.log("Sensor refresh complete.")
-
-    async def polling_loop(self):
-        while True:
-            self.root.after(1, self.refresh_data)
-            await asyncio.sleep(POLL_INTERVAL)
-
-    def start_polling_loop(self):
-        asyncio.run(self.polling_loop())
 
 
 # ---------------- MAIN ---------------- #

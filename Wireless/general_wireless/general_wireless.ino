@@ -71,7 +71,42 @@ void setup(){ // in the futire, this code may be moved to its own function so th
   // http server
   // need to figure out if each sensor needs to get reread as a server, or if the variables update and a new json document is made for those.
   server.on("/", handleJson);
+
   server.on("/time", handleTime);
+
+  server.on("/temperature", []() {
+    server.send(200, "text/plain", String(temperature));
+  });
+
+  server.on("/humidity", []() {
+    server.send(200, "text/plain", String(humidity));
+  });
+
+  server.on("/moisture", []() {
+    server.send(200, "text/plain", String(moisture));
+  });
+
+  server.on("/state", []() {
+    server.send(200, "text/plain", state);
+  });
+
+  server.on("/water", HTTP_POST, []() {
+    // later trigger watering logic here
+    server.send(200, "application/json",
+                "{\"status\":\"watering\"}");
+  });
+
+  server.on("/pause", HTTP_POST, []() {
+    state = "Paused";
+    server.send(200, "application/json",
+                "{\"status\":\"paused\"}");
+  });
+
+  server.on("/resume", HTTP_POST, []() {
+    state = "Running";
+    server.send(200, "application/json",
+                "{\"status\":\"running\"}");
+  });
   server.begin();
   Serial.println("Json Collection started!");
 
@@ -85,7 +120,7 @@ void loop(){
 // this function enables the boards to connect to a wifi router
 void connect(String name, String password){
 
-  WiFi.begin(ROUTER_NAME.c_str(), ROUTER_PASSWORD.c_str());
+  WiFi.begin(name.c_str(), password.c_str());
  
   for (int attempts = 0; attempts < MAX_CONNECT_ATTEMPTS && WiFi.status() != WL_CONNECTED; attempts++){   // delay for connection to the network
     delay(500); // pauses
@@ -131,16 +166,24 @@ String getTimeString() {
  */
 void handleJson() {
   JsonDocument doc;
-  doc["Temperature"] = temperature;
-  doc["Moisture"] = moisture;
-  doc["Humidity"] = humidity;
-  doc["State"] = state;
-  doc["Time"] = getTimeString();
-  server.send(200, "application/json", serializeJson(doc, Serial));
+
+  doc["temperature"] = temperature;
+  doc["moisture"] = moisture;
+  doc["humidity"] = humidity;
+  doc["state"] = state;
+  doc["time"] = getTimeString();
+  
+  String json;
+  serializeJson(doc, json);
+
+  server.send(200, "application/json", json);
   // maybe add a delay here
 }
 
 
 void updateDeviceInfo(int theTemperature, int theMoisture, int theHumidity, String theState) {
-
+  temperature = theTemperature;
+  moisture = theMoisture;
+  humidity = theHumidity;
+  state = theState;
 }
