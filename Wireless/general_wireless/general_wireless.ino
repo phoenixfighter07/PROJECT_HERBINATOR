@@ -167,10 +167,10 @@ String getTimeString() {
 void handleJson() {
   JsonDocument doc;
 
-  doc["temperature"] = temperature;
-  doc["moisture"] = moisture;
-  doc["humidity"] = humidity;
-  doc["state"] = state;
+  doc["temperature"] = 67; //temperature;
+  doc["moisture"] = 68; //moisture;
+  doc["humidity"] = 69; //humidity;
+  doc["state"] = "ur mom :P"; //state;
   doc["time"] = getTimeString();
   
   String json;
