@@ -26,6 +26,18 @@
  * Unit name
 */
 
+/* Exposed variables for JSON */
+
+/* Last valid DHT11 readings. */
+float lastTempC = 22.0f;
+float lastHumidity = 50.0f;
+
+/* Last valid moisture */
+float lastMoisturePct = 0.0f;
+
+/* State */
+const char* currentStateName = "";
+
 /* State Enums */
 enum class State {
   MainLoop,
@@ -272,10 +284,6 @@ unsigned long stateEnteredMs = 0;
 unsigned int readFailCount = 0;
 unsigned long flashBegin = 0;
 
-/* Last valid DHT11 readings. */
-float lastTempC = 22.0f;
-float lastHumidity = 50.0f;
-
 /* Current calibration values for the moisture sensor. */
 int moistureDry = 0;
 int moistureWet = 0;
@@ -402,8 +410,10 @@ void enableLEDS() {
 void transitionTo(const State next) {
   currentState = next;
   stateEnteredMs = millis();
+  currentStateName = stateNames[static_cast<int>(next)];
+
   Serial.print("Transition -> ");
-  Serial.println(stateNames[static_cast<int>(next)]);
+  Serial.println(currentStateName);
 }
 
 /**
@@ -582,6 +592,8 @@ float readMoistureSensor(int *rawMoist) {
   float pct = (float)(*rawMoist - moistureDry) / (moistureWet - moistureDry); // Derived from lerp equation to get moisture pct
   moistureSensorFail = (validCalibration && (pct < -MOIST_FAIL_GRACE || pct > 1 + MOIST_FAIL_GRACE)) || *rawMoist < MIN_RAW_MOIST;
 
+  lastMoisturePct = pct;
+
   return pct;
 }
 
@@ -635,6 +647,10 @@ void loop() {
     btnDown = now;
   }
   lastBtnDown = btnDownNow;
+
+  // Debug
+  //Serial.printf("Last moisture percent is %f.\n", lastMoisturePct);
+  //Serial.printf("Current state is %s.\n", currentStateName);
 
   // Failure states — preempt whatever state we were in
   if (tempSensorFail && currentState != State::TempSensorFail) {
