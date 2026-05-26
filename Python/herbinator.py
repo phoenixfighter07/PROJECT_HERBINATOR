@@ -28,14 +28,12 @@ def send_command(endpoint, method="GET", data=None):
             raise ValueError("Unsupported HTTP method")
 
         response.raise_for_status()
-        try:
-            return response.json()
-        except ValueError:
-            return response.text
+        return response.json()
 
     except requests.exceptions.RequestException as e:
         return {"error": str(e)}
-
+    except ValueError as e:
+        return {"error": f"Bad JSON: {e}"}
 
 # display water level and manually water, water level reads as a percentage of total capacity :)
 def herbinator_water():
@@ -53,20 +51,8 @@ def unpause_herbinator():
 
 # read the temperature off the sensor, give a recommendation based off the temperature
 # if state is off, or no connection, then commands should not process.
-def get_temperature():
-    return send_command("temperature")
-
-def get_herbinator_state():
-    return send_command("state")
-
-def get_data_time():
-    return send_command("time")
-
-def get_humidity():
-    return send_command("humidity")
-
-def get_moisture():
-    return send_command("moisture")
+def get_device_data():
+    return send_command("")
 
 class Herbinator:
 
@@ -142,29 +128,38 @@ class Herbinator:
         self.log(f"Paused for 60s: {response}")
 
     def refresh_data(self):
-        temp = get_temperature()
-        if isinstance(temp, dict) and "error" in temp:
-            self.log(temp["error"])
+        data = get_device_data()
+
+        print(type(data))
+        print(data)
+        self.log(str(data))
 
         self.log("Refreshing sensor data...")
+        data = get_device_data()
 
-        self.temperature_var.set(
-            str(get_temperature() or "Disconnected")
-        )
-        self.humidity_var.set(
-            str(get_humidity() or "Disconnected")
-        )
-        self.moisture_var.set(
-            str(get_moisture() or "Disconnected")
-        )
-        self.state_var.set(
-            str(get_herbinator_state() or "Disconnected")
-        )
-        self.time_var.set(
-            str(get_data_time() or "Disconnected")
-        )
-
-        self.log("Sensor refresh complete.")
+        if isinstance(data, dict):
+            self.temperature_var.set(
+                str(data.get("temperature", "Disconnected"))
+            )
+            self.humidity_var.set(
+                str(data.get("humidity", "Disconnected"))
+            )
+            self.moisture_var.set(
+                str(data.get("moisture", "Disconnected"))
+            )
+            self.state_var.set(
+                str(data.get("state", "Disconnected"))
+            )
+            self.time_var.set(
+                str(data.get("time", "Disconnected"))
+            )
+        else:
+            self.temperature_var.set("Disconnected")
+            self.humidity_var.set("Disconnected")
+            self.moisture_var.set("Disconnected")
+            self.state_var.set("Disconnected")
+            self.time_var.set("Disconnected")
+            self.log("Sensor refresh complete.")
 
 
 # ---------------- MAIN ---------------- #
