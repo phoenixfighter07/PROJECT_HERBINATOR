@@ -3184,7 +3184,7 @@
 				)
 			)
 		)
-		(property "Value" "LED"
+		(property "Value" "Blue"
 			(at 51.1175 41.91 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3194,7 +3194,7 @@
 				)
 			)
 		)
-		(property "Footprint" "LED_SMD:LED_1210_3225Metric_Pad1.42x2.65mm_HandSolder"
+		(property "Footprint" "BlueLED:LED_APT2012VBC_D"
 			(at 49.53 46.99 0)
 			(hide yes)
 			(show_name no)
@@ -3677,7 +3677,7 @@
 				)
 			)
 		)
-		(property "Value" "LED"
+		(property "Value" "Green"
 			(at 51.1175 27.94 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3687,7 +3687,7 @@
 				)
 			)
 		)
-		(property "Footprint" "LED_SMD:LED_1210_3225Metric_Pad1.42x2.65mm_HandSolder"
+		(property "Footprint" "GreenLED:LED_APT2012CGCK"
 			(at 49.53 33.02 0)
 			(hide yes)
 			(show_name no)
@@ -4327,7 +4327,7 @@
 				)
 			)
 		)
-		(property "Value" "LED"
+		(property "Value" "Red"
 			(at 51.1175 54.61 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4337,7 +4337,7 @@
 				)
 			)
 		)
-		(property "Footprint" "LED_SMD:LED_1210_3225Metric_Pad1.42x2.65mm_HandSolder"
+		(property "Footprint" "RedLED:LED_APT2012EC"
 			(at 49.53 59.69 0)
 			(hide yes)
 			(show_name no)

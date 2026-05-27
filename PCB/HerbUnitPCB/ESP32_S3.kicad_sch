@@ -6870,8 +6870,8 @@
 				(justify right)
 			)
 		)
-		(property "Value" "Green LED"
-			(at 109.982 144.272 90)
+		(property "Value" "Green"
+			(at 114.808 144.272 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9996,7 +9996,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "Green LED"
+		(property "Value" "Green"
 			(at 182.372 143.51 90)
 			(show_name no)
 			(do_not_autoplace no)

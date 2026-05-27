@@ -1,0 +1,6 @@
+(fp_lib_table
+	(version 7)
+	(lib (name "BlueLED") (type "KiCad") (uri "${KIPRJMOD}/LEDs/BlueLED") (options "") (descr ""))
+	(lib (name "GreenLED") (type "KiCad") (uri "${KIPRJMOD}/LEDs/GreenLED") (options "") (descr ""))
+	(lib (name "RedLED") (type "KiCad") (uri "${KIPRJMOD}/LEDs/RedLED") (options "") (descr ""))
+)
