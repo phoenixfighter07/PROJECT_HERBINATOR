@@ -90,11 +90,11 @@ enum class LEDColor {
 
 /* ESP32 Settings -----------------------------------------------------------------*/
 /* Networking*/
-//String ROUTER_NAME = "HerbyIOT";
-//String ROUTER_PASSWORD = "herbinator";
-String ROUTER_NAME;
-String ROUTER_PASSWORD;
-String mdnsName = "herbnet.local";
+String ROUTER_NAME = "HerbyIOT";
+String ROUTER_PASSWORD = "herbinator";
+//String ROUTER_NAME;
+//String ROUTER_PASSWORD;
+String mdnsName = "herbnet";
 
 // NTP server
 const char* ntpServer = "pool.ntp.org"; // atomic clock ntp pooler
@@ -257,7 +257,6 @@ const unsigned int SENSOR_DRY_ADDRESS = 4;
 
 /* The size of EEPROM memory to simulate. */
 const unsigned int EEPROM_SIZE = 8;
-
 /**
  * The number of consecutive moisture sensor fails 
  * that must occur before an error state is entered.
@@ -444,11 +443,6 @@ void setup() {
   while (!Serial){
     ; // waits for esp to connect
   }
-    ROUTER_NAME = getString("Enter router name.");
-  ROUTER_NAME.trim();
-  
-  ROUTER_PASSWORD = getString("Enter router password.");
-  ROUTER_PASSWORD.trim();
 
   connect(ROUTER_NAME, ROUTER_PASSWORD);
  
@@ -777,6 +771,7 @@ void handleJson() {
   serializeJson(doc, json);
 
   server.send(200, "application/json", json);
+
   // maybe add a delay here
 }
 
@@ -788,8 +783,8 @@ static unsigned long last_flush = 0;
  * loop function that drives the FSM.
  */
 void loop() {
-  now = millis();
   server.handleClient(); // continuous client handling
+  now = millis();
   if (logFile && millis() - last_flush > FLUSH_CYCLE_TIME) {
     logFile.flush();
     last_flush = millis();

@@ -7,12 +7,12 @@
 import requests
 import time
 import tkinter as tk
-from tkinter import ttk, messagebox
-import enum
+#from tkinter import ttk, messagebox
+#import enum
 
 # herby should host an http server that has JSON data dynamically updated to be sent over the network to the client
-BASE_URL = "http://herbnet.local"  # DNS address
-POLL_INTERVAL = 3
+BASE_URL = "http://192.168.251.198"  # DNS address
+POLL_INTERVAL = 30
 
 # The pause function is currently not implemented in the fsm logic, so pause never actually pauses anything (yet).
 # same with manual watering functionality.
@@ -21,9 +21,9 @@ def send_command(endpoint, method="GET", data=None):
 
     try:
         if method == "GET":
-            response = requests.get(url, timeout=3)
+            response = requests.get(url, timeout=10)
         elif method == "POST":
-            response = requests.post(url, json=data, timeout=3)
+            response = requests.post(url, json=data, timeout=10)
         else:
             raise ValueError("Unsupported HTTP method")
 
