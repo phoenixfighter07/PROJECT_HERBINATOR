@@ -2804,7 +2804,7 @@
 				)
 			)
 		)
-		(property "MPN" "  MSD-3-A"
+		(property "MPN" "DM1AA-SF-PEJ(21)"
 			(at 149.86 83.82 0)
 			(hide yes)
 			(show_name no)
@@ -2815,7 +2815,7 @@
 				)
 			)
 		)
-		(property "Manufacturer" "Same Sky"
+		(property "Manufacturer" "Hirose Electric Co Ltd"
 			(at 149.86 83.82 0)
 			(hide yes)
 			(show_name no)
